@@ -1,4 +1,4 @@
-pode/**
+/**
  * Game State Manager - Ghostbusters AR
  * Gerencia o estado do jogo, incluindo inventário, pontos, níveis e desbloqueios
  */

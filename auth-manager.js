@@ -6,13 +6,14 @@ export class AuthManager {
         this.gameManager = gameManager;
         this.auth = null;
         this.database = null;
-        this.provider = new GoogleAuthProvider();
+        this.provider = null; // Não instanciar imediatamente
     }
 
     initializeApp(firebaseConfig) {
         // Firebase initialization is handled in game-manager, so we just get references
         this.auth = getAuth();
         this.database = getDatabase();
+        this.provider = new GoogleAuthProvider(); // Instanciar aqui, quando realmente necessário
         onAuthStateChanged(this.auth, (user) => this.onAuthStateChanged(user));
         return { auth: this.auth, database: this.database, provider: this.provider };
     }
