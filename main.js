@@ -78,11 +78,17 @@ AFRAME.registerComponent('game-manager', {
     },
 
     initializeApp: function () {
+        // Initialize Firebase app
         const app = initializeApp(this.firebaseConfig);
-        this.auth = getAuth(app);
-        this.database = getDatabase(app);
-        this.provider = new GoogleAuthProvider();
+        
+        // Get auth and database instances correctly
+        this.auth = getAuth();
+        this.database = getDatabase();
+        
+        // Set up auth state listener
         onAuthStateChanged(this.auth, this.onAuthStateChanged);
+        
+        // Show Google login button
         this.uiManager.googleLoginButton.style.display = 'block';
     },
 
