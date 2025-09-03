@@ -140,6 +140,7 @@ AFRAME.registerComponent('game-manager', {
     startQrScanner: async function () {
         this.uiManager.inventoryModal.classList.add('hidden');
 
+        // Verificar se já estamos em modo AR antes de tentar sair
         if (this.el.sceneEl.is('ar-mode')) {
             try {
                 // exitVR() é a função correta para sair de sessões AR e VR.
@@ -161,7 +162,7 @@ AFRAME.registerComponent('game-manager', {
                     this.stopQrScanner();
                 }
             );
-        }, 200); // Atraso de 200ms
+        }, 500); // Aumentar o atraso para 500ms para garantir que a câmera seja liberada
     },
 
     stopQrScanner: function () {
