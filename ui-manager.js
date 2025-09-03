@@ -106,6 +106,27 @@ export class UIManager {
         this.emailSignupButton.addEventListener('click', () => gameManager.handleEmailSignup());
 
         // Botões de localização
+        // Adicionar event listeners para os botões de localização
+        const locationButtons = document.querySelectorAll('.location-button');
+        locationButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remover classe 'selected' de todos os botões
+                locationButtons.forEach(btn => btn.classList.remove('selected'));
+                
+                // Adicionar classe 'selected' ao botão clicado
+                button.classList.add('selected');
+                
+                // Obter o nome da localização do atributo data
+                const locationName = button.getAttribute('data-location-name');
+                
+                // Definir a localização selecionada no gameState
+                gameManager.gameState.setSelectedLocation(locationName);
+                
+                // Habilitar o botão de entrar
+                this.setEnterButtonEnabled(true);
+            });
+        });
+
         this.enterButton.addEventListener('click', async () => {
             if (!gameManager.gameState.selectedLocation) return;
             try {
