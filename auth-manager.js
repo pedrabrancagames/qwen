@@ -83,7 +83,8 @@ export class AuthManager {
         return get(userRef).then((snapshot) => {
             if (snapshot.exists()) {
                 this.gameManager.userStats = snapshot.val();
-                this.gameManager.inventory = this.gameManager.userStats.inventory || [];
+                // Atualizar o inventário do gameState com os dados do banco
+                this.gameManager.gameState.inventory = this.gameManager.userStats.inventory || [];
             } else {
                 let displayName = 'Caça-Fantasma';
                 if (user.isAnonymous) {
@@ -105,7 +106,8 @@ export class AuthManager {
                 };
                 return set(userRef, newUserStats).then(() => {
                     this.gameManager.userStats = newUserStats;
-                    this.gameManager.inventory = [];
+                    // Atualizar o inventário do gameState com os dados do banco
+                    this.gameManager.gameState.inventory = [];
                 });
             }
         });
