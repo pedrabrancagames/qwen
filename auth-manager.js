@@ -27,11 +27,13 @@ export class AuthManager {
     signInWithGoogle() {
         // Create provider instance
         this.provider = new GoogleAuthProvider();
-        return signInWithPopup(this.auth, this.provider);
+        return signInWithPopup(this.auth, this.provider)
+            .catch((error) => this.handleAuthError(error));
     }
 
     signInAsGuest() {
-        return signInAnonymously(this.auth).catch((error) => this.handleAuthError(error));
+        return signInAnonymously(this.auth)
+            .catch((error) => this.handleAuthError(error));
     }
 
     signInWithEmail(email, password) {
@@ -70,7 +72,10 @@ export class AuthManager {
                 break;
         }
         
-        throw new Error(errorMessage);
+        // Para erros de login, apenas logamos e não lançamos exceção
+        // para que o fluxo da aplicação continue
+        console.error("Authentication error handled:", errorMessage);
+        return { error: true, message: errorMessage };
     }
 
     saveUserToDatabase(user) {
@@ -111,15 +116,33 @@ export class AuthManager {
             this.gameManager.currentUser = user;
             this.saveUserToDatabase(user).then(() => {
                 this.gameManager.updateInventoryUI();
-                this.gameManager.loginScreen.classList.add('hidden');
-                this.gameManager.emailLoginScreen.classList.add('hidden');
-                this.gameManager.locationScreen.classList.remove('hidden');
+                
+                // Verificar se os elementos existem antes de manipulá-los
+                if (this.gameManager.uiManager && this.gameManager.uiManager.loginScreen) {
+                    this.gameManager.uiManager.loginScreen.classList.add('hidden');
+                }
+                if (this.gameManager.uiManager && this.gameManager.uiManager.emailLoginScreen) {
+                    this.gameManager.uiManager.emailLoginScreen.classList.add('hidden');
+                }
+                if (this.gameManager.uiManager && this.gameManager.uiManager.locationScreen) {
+                    this.gameManager.uiManager.locationScreen.classList.remove('hidden');
+                }
+            }).catch((error) => {
+                console.error("Error saving user to database:", error);
             });
         } else {
             this.gameManager.currentUser = null;
-            this.gameManager.loginScreen.classList.remove('hidden');
-            this.gameManager.locationScreen.classList.add('hidden');
-            this.gameManager.gameUi.classList.add('hidden');
+            
+            // Verificar se os elementos existem antes de manipulá-los
+            if (this.gameManager.uiManager && this.gameManager.uiManager.loginScreen) {
+                this.gameManager.uiManager.loginScreen.classList.remove('hidden');
+            }
+            if (this.gameManager.uiManager && this.gameManager.uiManager.locationScreen) {
+                this.gameManager.uiManager.locationScreen.classList.add('hidden');
+            }
+            if (this.gameManager.uiManager && this.gameManager.uiManager.gameUi) {
+                this.gameManager.uiManager.gameUi.classList.add('hidden');
+            }
         }
     }
 }
