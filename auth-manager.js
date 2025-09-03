@@ -1,3 +1,4 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -6,22 +7,27 @@ export class AuthManager {
         this.gameManager = gameManager;
         this.auth = null;
         this.database = null;
-        // Remover a inicialização do provider aqui
+        this.provider = null;
     }
 
     initializeApp(firebaseConfig) {
-        // Firebase initialization is handled in game-manager, so we just get references
-        this.auth = getAuth();
-        this.database = getDatabase();
-        // Remover a inicialização do provider aqui também
+        // Initialize Firebase app
+        const app = initializeApp(firebaseConfig);
+        
+        // Get auth and database instances correctly
+        this.auth = getAuth(app);
+        this.database = getDatabase(app);
+        
+        // Set up auth state listener
         onAuthStateChanged(this.auth, (user) => this.onAuthStateChanged(user));
+        
         return { auth: this.auth, database: this.database };
     }
 
     signInWithGoogle() {
-        // Instanciar o provedor apenas quando necessário
-        const provider = new GoogleAuthProvider();
-        return signInWithPopup(this.auth, provider);
+        // Create provider instance
+        this.provider = new GoogleAuthProvider();
+        return signInWithPopup(this.auth, this.provider);
     }
 
     signInAsGuest() {

@@ -36,7 +36,12 @@ AFRAME.registerComponent('game-manager', {
         };
 
         this.bindMethods();
-        this.initializeApp();
+        
+        // Initialize Firebase and AuthManager
+        const { auth, database } = this.authManager.initializeApp(this.firebaseConfig);
+        this.auth = auth;
+        this.database = database;
+        
         this.uiManager.addEventListeners(this);
 
         this.gameInitialized = false;
@@ -49,6 +54,9 @@ AFRAME.registerComponent('game-manager', {
         this.protonBeamSound = document.getElementById('proton-beam-sound');
         this.ghostCaptureSound = document.getElementById('ghost-capture-sound');
         this.inventoryFullSound = document.getElementById('inventory-full-sound');
+        
+        // Show Google login button
+        this.uiManager.googleLoginButton.style.display = 'block';
     },
 
     bindMethods: function () {
@@ -78,18 +86,8 @@ AFRAME.registerComponent('game-manager', {
     },
 
     initializeApp: function () {
-        // Initialize Firebase app
-        const app = initializeApp(this.firebaseConfig);
-        
-        // Get auth and database instances correctly
-        this.auth = getAuth();
-        this.database = getDatabase();
-        
-        // Set up auth state listener
-        onAuthStateChanged(this.auth, this.onAuthStateChanged);
-        
-        // Show Google login button
-        this.uiManager.googleLoginButton.style.display = 'block';
+        // This is now handled in the AuthManager
+        // We're keeping this method for compatibility but it's empty
     },
 
     updateInventoryUI: function () {
