@@ -3,9 +3,6 @@
  * Gerencia o scanner de QR Code para depositar fantasmas na unidade de contenção
  */
 
-// Importar Html5Qrcode dinamicamente apenas quando necessário
-let Html5Qrcode;
-
 export class QRManager {
     constructor() {
         this.html5QrCode = null;
@@ -15,10 +12,9 @@ export class QRManager {
     // Inicia o scanner de QR Code
     async startQrScanner(qrReaderElementId, onScanSuccess, onError) {
         try {
-            // Carregar Html5Qrcode dinamicamente se ainda não foi carregado
-            if (!Html5Qrcode) {
-                const html5QrcodeModule = await import('html5-qrcode');
-                Html5Qrcode = html5QrcodeModule.Html5Qrcode;
+            // Verifica se Html5Qrcode está disponível globalmente
+            if (typeof Html5Qrcode === 'undefined') {
+                throw new Error('Html5Qrcode não está disponível. Verifique se a biblioteca foi carregada corretamente.');
             }
             
             // Limpa instância anterior se existir
