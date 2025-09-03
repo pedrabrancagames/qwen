@@ -6,6 +6,7 @@
 export class ARManager {
     constructor() {
         this.hitTestSource = null;
+        this.referenceSpace = null;
         this.placedObjects = { ghost: false, ecto1: false };
         this.objectToPlace = null;
         this.reticle = null;
@@ -36,8 +37,8 @@ export class ARManager {
     // Configura o hit test para AR
     async setupHitTest(sceneEl) {
         const session = sceneEl.renderer.xr.getSession();
-        const referenceSpace = await session.requestReferenceSpace('viewer');
-        this.hitTestSource = await session.requestHitTestSource({ space: referenceSpace });
+        this.referenceSpace = await session.requestReferenceSpace('viewer');
+        this.hitTestSource = await session.requestHitTestSource({ space: this.referenceSpace });
     }
 
     // Processa o tick para atualização de elementos AR
@@ -50,7 +51,7 @@ export class ARManager {
 
         if (hitTestResults.length > 0) {
             const hit = hitTestResults[0];
-            const pose = hit.getPose(this.getReferenceSpace());
+            const pose = hit.getPose(this.referenceSpace);
             this.reticle.setAttribute('visible', true);
             this.reticle.object3D.matrix.fromArray(pose.transform.matrix);
             this.reticle.object3D.matrix.decompose(this.reticle.object3D.position, this.reticle.object3D.quaternion, this.reticle.object3D.scale);
@@ -120,15 +121,6 @@ export class ARManager {
     // Define a entidade do fantasma ativo
     setActiveGhostEntity(entity) {
         this.activeGhostEntity = entity;
-    }
-
-    // Obtém o espaço de referência
-    getReferenceSpace() {
-        // Esta função precisa ser implementada com base no contexto específico do A-Frame
-        // Normalmente seria algo como:
-        // return this.el.sceneEl.renderer.xr.getReferenceSpace();
-        console.warn("getReferenceSpace precisa ser implementado com o contexto correto do A-Frame");
-        return null;
     }
 
     // Pausa as animações do fantasma
