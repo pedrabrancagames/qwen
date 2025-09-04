@@ -213,6 +213,11 @@ export class UIManager {
     updateDistanceInfo(text, color = "#92F428") {
         this.distanceInfo.innerText = text;
         this.distanceInfo.style.color = color;
+        
+        // Remover a classe near-ghost do minimapa se a cor não for vermelha
+        if (color !== "#ff0000") {
+            this.minimapElement.classList.remove('near-ghost');
+        }
     }
 
     // Habilita/desabilita o botão de entrar

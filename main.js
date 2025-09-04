@@ -257,6 +257,15 @@ AFRAME.registerComponent('game-manager', {
                 this.arManager.ghostComumEntity
             );
         }
+
+        // Aplicar classe ao minimapa quando próximo de um fantasma
+        if (result.isNearGhost !== undefined) {
+            if (result.isNearGhost) {
+                this.uiManager.minimapElement.classList.add('near-ghost');
+            } else {
+                this.uiManager.minimapElement.classList.remove('near-ghost');
+            }
+        }
     },
 
     startCapture: function () {

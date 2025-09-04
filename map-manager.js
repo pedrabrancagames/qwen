@@ -101,9 +101,9 @@ export class MapManager {
                 objectToPlace = 'ghost';
                 // activeGhostEntity seria definido no contexto do game manager
                 isNearObject = true;
-                return { isNearObject, objectToPlace, activeGhostEntity, distanceInfo: `FANTASMA ${ghostData.type.toUpperCase()} PRÓXIMO!` };
+                return { isNearObject, objectToPlace, activeGhostEntity, distanceInfo: `Fantasma: ${distanceGhost.toFixed(0)}m`, isNearGhost: true };
             } else {
-                return { isNearObject, objectToPlace, activeGhostEntity, distanceInfo: `Fantasma: ${distanceGhost.toFixed(0)}m` };
+                return { isNearObject, objectToPlace, activeGhostEntity, distanceInfo: `Fantasma: ${distanceGhost.toFixed(0)}m`, isNearGhost: false };
             }
         }
 
