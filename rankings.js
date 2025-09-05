@@ -83,9 +83,8 @@ export class RankingsManager {
             
             // Consultar os 10 melhores jogadores ordenados por pontos
             const usersRef = ref(this.gameManager.database, 'users');
-            const rankingsQuery = query(usersRef, orderByChild('points'), limitToFirst(10));
-            
-            const snapshot = await get(rankingsQuery);
+            // Remover a ordenação por pontos temporariamente para testar
+            const snapshot = await get(usersRef);
             
             if (snapshot.exists()) {
                 // Converter os dados para um array
@@ -100,11 +99,14 @@ export class RankingsManager {
                     });
                 });
                 
-                // Ordenar por pontos (decrescente)
+                // Ordenar por pontos (decrescente) localmente
                 users.sort((a, b) => b.points - a.points);
                 
+                // Pegar apenas os 10 primeiros
+                const topUsers = users.slice(0, 10);
+                
                 // Exibir os rankings
-                this.displayRankings(users);
+                this.displayRankings(topUsers);
             } else {
                 this.rankingsList.innerHTML = '<li>Nenhum jogador encontrado.</li>';
             }
@@ -112,6 +114,8 @@ export class RankingsManager {
             console.error("Erro ao carregar rankings:", error);
             if (error.message && error.message.includes("Permission denied")) {
                 this.rankingsList.innerHTML = '<li>Erro: Permissão negada. Não foi possível acessar os rankings.</li>';
+            } else if (error.message && error.message.includes("Index not defined")) {
+                this.rankingsList.innerHTML = '<li>Erro: Índice não definido. O sistema de rankings precisa de configurações adicionais.</li>';
             } else {
                 this.rankingsList.innerHTML = '<li>Erro ao carregar rankings.</li>';
             }
