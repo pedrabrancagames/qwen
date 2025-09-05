@@ -145,6 +145,10 @@ export class AuthManager {
             if (this.gameManager.uiManager && this.gameManager.uiManager.gameUi) {
                 this.gameManager.uiManager.gameUi.classList.add('hidden');
             }
+            // Esconder o menu AR se estiver visível
+            if (this.gameManager.uiManager && this.gameManager.uiManager.arMenu) {
+                this.gameManager.uiManager.arMenu.classList.add('hidden');
+            }
         }
     }
 }

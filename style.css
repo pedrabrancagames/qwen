@@ -210,6 +210,7 @@ body {
     width: 60px;
     z-index: 15;
     opacity: 0.8;
+    cursor: pointer;
 }
 
 #inventory-icon-container {
@@ -839,4 +840,119 @@ body {
     text-align: center;
     line-height: 30px; /* Ajustado para o tamanho da fonte */
     text-shadow: 0 0 3px #000000;
+}
+
+/* Menu AR */
+.ar-menu {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    z-index: 30;
+}
+
+.ar-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(26, 26, 26, 0.95);
+    border: 2px solid #92F428;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(146, 244, 40, 0.5);
+}
+
+.ar-menu-button {
+    padding: 12px 20px;
+    background-color: #333;
+    border: 2px solid #555;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-size: 1em;
+}
+
+.ar-menu-button:hover {
+    background-color: rgba(146, 244, 40, 0.2);
+    border-color: #92F428;
+    transform: translateY(-2px);
+}
+
+/* Modal de Rankings */
+#rankings-modal {
+    z-index: 50;
+}
+
+#rankings-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background: #1a1a1a;
+    border: 2px solid #92F428;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(146, 244, 40, 0.5);
+    box-sizing: border-box;
+}
+
+#rankings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #92F428;
+}
+
+#close-rankings-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+#rankings-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#rankings-list li {
+    padding: 10px;
+    background: #333;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#rankings-list li.current-user {
+    background: rgba(146, 244, 40, 0.2);
+    border: 1px solid #92F428;
+}
+
+.ranking-position {
+    font-weight: bold;
+    width: 30px;
+}
+
+.ranking-name {
+    flex-grow: 1;
+}
+
+.ranking-points {
+    font-weight: bold;
+    color: #92F428;
+}
+
+.ranking-captures {
+    font-size: 0.9em;
+    color: #aaa;
 }

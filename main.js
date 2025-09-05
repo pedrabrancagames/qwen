@@ -9,6 +9,7 @@ import { ARManager } from './ar-manager.js';
 import { UIManager } from './ui-manager.js';
 import { MapManager } from './map-manager.js';
 import { QRManager } from './qr-manager.js';
+import { RankingsManager } from './rankings.js';
 
 AFRAME.registerComponent('game-manager', {
     init: function () {
@@ -19,11 +20,13 @@ AFRAME.registerComponent('game-manager', {
         this.uiManager = new UIManager();
         this.mapManager = new MapManager();
         this.qrManager = new QRManager();
+        this.rankingsManager = new RankingsManager(this);
 
         // Inicializar elementos da interface
         this.uiManager.initializeUIElements();
         this.arManager.initializeARElements();
         this.mapManager.setMinimapElement(this.uiManager.minimapElement);
+        this.rankingsManager.initializeRankingsElements();
 
         this.firebaseConfig = {
             apiKey: "AIzaSyC8DE4F6mU9oyRw8cLU5vcfxOp5RxLcgHA",

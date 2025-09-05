@@ -48,6 +48,10 @@ export class UIManager {
         this.emailLoginButton = null;
         this.emailSignupButton = null;
         this.backToMainLoginButton = null;
+        
+        // Elementos do menu AR
+        this.gameLogo = null;
+        this.arMenu = null;
     }
 
     // Inicializa elementos da interface
@@ -87,6 +91,9 @@ export class UIManager {
         this.emailLoginButton = document.getElementById('email-login-button');
         this.emailSignupButton = document.getElementById('email-signup-button');
         this.backToMainLoginButton = document.getElementById('back-to-main-login');
+        
+        // Elementos do menu AR
+        this.gameLogo = document.getElementById('game-logo');
     }
 
     // Adiciona event listeners
@@ -161,6 +168,65 @@ export class UIManager {
         // Evento de entrada em AR
         gameManager.el.sceneEl.addEventListener('enter-vr', () => {
             gameManager.initGame();
+        });
+        
+        // Adicionar evento de clique ao logo para abrir o menu AR
+        this.gameLogo.addEventListener('click', () => this.toggleARMenu(gameManager));
+    }
+
+    // Alterna a visibilidade do menu AR
+    toggleARMenu(gameManager) {
+        // Se o menu AR não existe, cria-o
+        if (!this.arMenu) {
+            this.createARMenu(gameManager);
+        }
+        
+        // Alterna a visibilidade
+        if (this.arMenu.classList.contains('hidden')) {
+            this.arMenu.classList.remove('hidden');
+        } else {
+            this.arMenu.classList.add('hidden');
+        }
+    }
+
+    // Cria o menu AR
+    createARMenu(gameManager) {
+        // Criar o elemento do menu
+        this.arMenu = document.createElement('div');
+        this.arMenu.id = 'ar-menu';
+        this.arMenu.className = 'ui-element ar-menu hidden';
+        
+        // Conteúdo do menu
+        this.arMenu.innerHTML = `
+            <div class="ar-menu-content">
+                <button id="change-location-button" class="ar-menu-button">Mudar Área de Caça</button>
+                <button id="view-rankings-button" class="ar-menu-button">Ver Rankings</button>
+                <button id="logout-button" class="ar-menu-button">Sair</button>
+            </div>
+        `;
+        
+        // Adicionar ao container da UI
+        document.getElementById('ui-container').appendChild(this.arMenu);
+        
+        // Adicionar event listeners aos botões
+        document.getElementById('change-location-button').addEventListener('click', () => {
+            this.arMenu.classList.add('hidden');
+            gameManager.stopQrScanner();
+            // Sair do modo AR e mostrar tela de seleção de local
+            gameManager.el.sceneEl.exitVR().then(() => {
+                gameManager.uiManager.locationScreen.classList.remove('hidden');
+                gameManager.uiManager.gameUi.classList.add('hidden');
+            });
+        });
+        
+        document.getElementById('view-rankings-button').addEventListener('click', () => {
+            this.arMenu.classList.add('hidden');
+            gameManager.rankingsManager.showRankings();
+        });
+        
+        document.getElementById('logout-button').addEventListener('click', () => {
+            this.arMenu.classList.add('hidden');
+            gameManager.authManager.auth.signOut();
         });
     }
 
