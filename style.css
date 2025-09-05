@@ -211,6 +211,7 @@ body {
     z-index: 15;
     opacity: 0.8;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 #inventory-icon-container {
