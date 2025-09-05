@@ -8,7 +8,6 @@ import { ref, get, query, orderByChild, limitToFirst } from "https://www.gstatic
 export class RankingsManager {
     constructor(gameManager) {
         this.gameManager = gameManager;
-        this.database = gameManager.database;
         this.rankingsModal = null;
         this.rankingsList = null;
         this.closeRankingsButton = null;
@@ -59,8 +58,15 @@ export class RankingsManager {
             // Mostrar loading
             this.rankingsList.innerHTML = '<li>Carregando rankings...</li>';
             
+            // Verificar se o database está disponível
+            if (!this.gameManager.database) {
+                console.error("Database não está disponível");
+                this.rankingsList.innerHTML = '<li>Erro: Database não disponível.</li>';
+                return;
+            }
+            
             // Consultar os 10 melhores jogadores ordenados por pontos
-            const usersRef = ref(this.database, 'users');
+            const usersRef = ref(this.gameManager.database, 'users');
             const rankingsQuery = query(usersRef, orderByChild('points'), limitToFirst(10));
             
             const snapshot = await get(rankingsQuery);

@@ -21,6 +21,9 @@ export class AuthManager {
         // Set up auth state listener
         onAuthStateChanged(this.auth, (user) => this.onAuthStateChanged(user));
         
+        // Atribuir o database ao gameManager principal
+        this.gameManager.database = this.database;
+        
         return { auth: this.auth, database: this.database };
     }
 
