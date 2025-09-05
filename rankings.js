@@ -43,6 +43,13 @@ export class RankingsManager {
 
     // Mostra o modal de rankings
     showRankings() {
+        // Verificar se o usuário está logado
+        if (!this.gameManager.currentUser) {
+            this.rankingsList.innerHTML = '<li>Você precisa estar logado para ver os rankings.</li>';
+            this.rankingsModal.classList.remove('hidden');
+            return;
+        }
+        
         this.rankingsModal.classList.remove('hidden');
         this.loadRankings();
     }
@@ -64,6 +71,15 @@ export class RankingsManager {
                 this.rankingsList.innerHTML = '<li>Erro: Database não disponível.</li>';
                 return;
             }
+            
+            // Verificar se o usuário está logado
+            if (!this.gameManager.currentUser) {
+                console.error("Usuário não está logado");
+                this.rankingsList.innerHTML = '<li>Você precisa estar logado para ver os rankings.</li>';
+                return;
+            }
+            
+            console.log("Tentando carregar rankings para usuário:", this.gameManager.currentUser);
             
             // Consultar os 10 melhores jogadores ordenados por pontos
             const usersRef = ref(this.gameManager.database, 'users');
@@ -94,7 +110,11 @@ export class RankingsManager {
             }
         } catch (error) {
             console.error("Erro ao carregar rankings:", error);
-            this.rankingsList.innerHTML = '<li>Erro ao carregar rankings.</li>';
+            if (error.message && error.message.includes("Permission denied")) {
+                this.rankingsList.innerHTML = '<li>Erro: Permissão negada. Não foi possível acessar os rankings.</li>';
+            } else {
+                this.rankingsList.innerHTML = '<li>Erro ao carregar rankings.</li>';
+            }
         }
     }
 
