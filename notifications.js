@@ -1,5 +1,5 @@
 /**
- * Sistema de Notificações - Ghostbusters AR
+ * Sistema de Notificações - Ghost Squad
  * Sistema avançado de notificações toast, modais e alertas
  */
 
@@ -287,7 +287,7 @@ class NotificationSystem {
         });
     }
     
-    // Notificações específicas do Ghostbusters
+    // Notificações específicas do Ghost Squad
     ghostCaptured(ghostType = 'fantasma', points = 10) {
         // return this.show(
         //     `${ghostType} capturado! +${points} pontos`,

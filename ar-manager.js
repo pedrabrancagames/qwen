@@ -1,5 +1,5 @@
 /**
- * AR Manager - Ghostbusters AR
+ * AR Manager - Ghost Squad
  * Gerencia elementos de realidade aumentada, incluindo posicionamento, hit testing e renderização
  */
 

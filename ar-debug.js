@@ -1,4 +1,4 @@
-// Script de debug para modo AR - Ghostbusters
+// Script de debug para modo AR - Ghost Squad
 (function() {
     console.log('🔍 Iniciando verificação de debug para modo AR...');
     

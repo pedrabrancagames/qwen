@@ -1,5 +1,5 @@
 /**
- * Sistema de Efeitos Visuais - Ghostbusters AR
+ * Sistema de Efeitos Visuais - Ghost Squad
  * Implementa partículas, animações e efeitos especiais para o jogo
  */
 

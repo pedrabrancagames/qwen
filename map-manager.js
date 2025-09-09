@@ -1,5 +1,5 @@
 /**
- * Map Manager - Ghostbusters AR
+ * Map Manager - Ghost Squad
  * Gerencia o mapa, localização do jogador, marcação de pontos de interesse e cálculos de proximidade
  */
 

@@ -1,6 +1,6 @@
 
 /**
- * UI Manager - Ghostbusters AR
+ * UI Manager - Ghost Squad
  * Gerencia a interface do usuário, incluindo telas, botões, inventário e elementos visuais
  */
 

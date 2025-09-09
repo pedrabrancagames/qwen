@@ -1,5 +1,5 @@
 /**
- * QR Manager - Ghostbusters AR
+ * QR Manager - Ghost Squad
  * Gerencia o scanner de QR Code para depositar fantasmas na unidade de contenção
  */
 

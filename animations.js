@@ -1,5 +1,5 @@
 /**
- * Sistema de Animações - Ghostbusters AR
+ * Sistema de Animações - Ghost Squad
  * Gerencia animações CSS e JavaScript para elementos do jogo
  */
 

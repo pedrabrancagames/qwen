@@ -1,5 +1,5 @@
 /**
- * Efeito de Partículas de Fundo para a Tela de Login - Ghostbusters AR
+ * Efeito de Partículas de Fundo para a Tela de Login - Ghost Squad
  * Cria um efeito visual sutíl de partículas flutuantes na tela de login
  */
 

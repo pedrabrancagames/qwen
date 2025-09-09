@@ -1,5 +1,5 @@
 /**
- * Rankings Manager - Ghostbusters AR
+ * Rankings Manager - Ghost Squad
  * Gerencia o sistema de rankings dos jogadores
  */
 

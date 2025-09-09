@@ -1,5 +1,5 @@
 /**
- * Game State Manager - Ghostbusters AR
+ * Game State Manager - Ghost Squad
  * Gerencia o estado do jogo, incluindo inventário, pontos, níveis e desbloqueios
  */
 
