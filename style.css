@@ -32,15 +32,43 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.5s ease-out;
+    transition: opacity 0.5s ease-out, transform 0.5s ease;
     padding: 20px;
     box-sizing: border-box;
     pointer-events: auto; /* Telas cheias devem ser clicáveis */
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.ui-screen.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.ui-screen.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .hidden {
@@ -51,6 +79,26 @@ body {
     width: 80%;
     max-width: 350px;
     margin-bottom: 40px;
+    filter: drop-shadow(0 0 10px rgba(146, 244, 40, 0.3));
+    animation: logoGlow 3s ease-in-out infinite alternate, logoEntrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8);
+}
+
+@keyframes logoEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes logoGlow {
+    from {
+        filter: drop-shadow(0 0 5px rgba(146, 244, 40, 0.2));
+    }
+    to {
+        filter: drop-shadow(0 0 20px rgba(146, 244, 40, 0.5));
+    }
 }
 
 #loading-info, #location-info-text, #distance-info {
@@ -59,6 +107,15 @@ body {
     text-align: center;
     margin-top: 20px;
     height: 20px;
+}
+
+#version-info {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: #666;
+    font-size: 0.9em;
+    opacity: 0.7;
 }
 
 .action-button {
@@ -96,6 +153,16 @@ body {
     gap: 15px;
     width: 100%;
     max-width: 350px;
+    animation: buttonsEntrance 0.8s ease-out 0.3s forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes buttonsEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .auth-button {
@@ -105,18 +172,92 @@ body {
     color: #fff;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     text-align: center;
     font-size: 1.1em;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(146, 244, 40, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.auth-button:hover::before {
+    left: 100%;
+}
+
+.auth-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border-color: #92F428;
 }
 
 #google-login-button {
-    background-color: #4285F4;
+    background: linear-gradient(45deg, #4285F4, #3465a4);
     border-color: #4285F4;
 }
 
+#google-login-button:hover {
+    background: linear-gradient(45deg, #3465a4, #4285F4);
+}
+
+#email-login-show-button {
+    background: linear-gradient(45deg, #333, #444);
+}
+
+#anonymous-login-button {
+    background: linear-gradient(45deg, #555, #666);
+}
+
+.auth-button.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.auth-button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid #92F428;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#email-login-screen {
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    width: 90%;
+    margin: auto;
+}
+
 #email-login-screen h2 {
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #92F428;
+    font-size: 1.8em;
+    text-shadow: 0 0 10px rgba(146, 244, 40, 0.3);
 }
 
 #logo-small {
@@ -125,20 +266,30 @@ body {
 }
 
 .input-group {
-    margin-bottom: 15px;
-    width: 100%;
-    max-width: 350px;
+    margin-bottom: 20px;
+    position: relative;
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px;
+    padding: 15px;
     font-size: 1em;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background-color: #222;
+    border-radius: 8px;
+    border: 2px solid #333;
+    background-color: rgba(30, 30, 30, 0.8);
     color: #fff;
     box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: #92F428;
+    box-shadow: 0 0 15px rgba(146, 244, 40, 0.3);
+    outline: none;
+}
+
+.input-group input::placeholder {
+    color: #666;
 }
 
 .error-text {
@@ -149,13 +300,34 @@ body {
 
 #email-auth-buttons-container {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    margin-top: 25px;
 }
 
 #email-login-button, #email-signup-button {
-    display: inline-block;
-    background-color: #92F428;
+    flex: 1;
+    padding: 14px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#email-login-button {
+    background: linear-gradient(45deg, #4CAF50, #8BC34A);
     color: #000;
+}
+
+#email-signup-button {
+    background: linear-gradient(45deg, #2196F3, #03DAC6);
+    color: #fff;
+}
+
+#email-login-button:hover, #email-signup-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .text-button {
@@ -166,6 +338,12 @@ body {
     text-decoration: underline;
     cursor: pointer;
     font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.text-button:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(146, 244, 40, 0.5);
 }
 
 
@@ -675,6 +853,71 @@ body {
     
     .location-button:hover {
         transform: translateY(-1px) scale(1.015);
+    }
+    
+    /* Responsividade aprimorada para a tela de login */
+    #login-screen {
+        padding: 15px;
+    }
+    
+    #logo {
+        width: 90%;
+        max-width: 250px;
+        margin-bottom: 30px;
+    }
+    
+    #auth-buttons-container {
+        max-width: 300px;
+        gap: 12px;
+    }
+    
+    .auth-button {
+        padding: 14px;
+        font-size: 1em;
+    }
+    
+    #loading-info {
+        font-size: 0.9em;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #logo {
+        max-width: 200px;
+        margin-bottom: 25px;
+    }
+    
+    .auth-button {
+        padding: 12px;
+        font-size: 0.95em;
+    }
+    
+    #auth-buttons-container {
+        max-width: 280px;
+    }
+    
+    #email-login-screen {
+        padding: 20px;
+    }
+    
+    #email-login-screen h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    
+    .input-group input {
+        padding: 12px;
+        font-size: 0.95em;
+    }
+    
+    #email-auth-buttons-container {
+        gap: 10px;
+        flex-direction: column;
+    }
+    
+    #email-login-button, #email-signup-button {
+        width: 100%;
     }
 }
 

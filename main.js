@@ -58,6 +58,11 @@ AFRAME.registerComponent('game-manager', {
         this.ghostCaptureSound = document.getElementById('ghost-capture-sound');
         this.inventoryFullSound = document.getElementById('inventory-full-sound');
         
+        // Inicializar efeito de partículas de fundo
+        if (window.loginBackgroundEffect) {
+            console.log('🎨 Efeito de partículas de fundo ativado');
+        }
+        
         // Show Google login button
         this.uiManager.googleLoginButton.style.display = 'block';
     },

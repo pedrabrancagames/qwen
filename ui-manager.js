@@ -99,24 +99,68 @@ export class UIManager {
     // Adiciona event listeners
     addEventListeners(gameManager) {
         // Botões de autenticação
-        this.googleLoginButton.addEventListener('click', () => gameManager.authManager.signInWithGoogle());
-        this.anonymousLoginButton.addEventListener('click', () => gameManager.authManager.signInAsGuest());
+        this.googleLoginButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.setButtonLoading(this.googleLoginButton, true);
+            gameManager.authManager.signInWithGoogle()
+                .finally(() => {
+                    this.setButtonLoading(this.googleLoginButton, false);
+                });
+        });
+        
+        this.anonymousLoginButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.setButtonLoading(this.anonymousLoginButton, true);
+            gameManager.authManager.signInAsGuest()
+                .finally(() => {
+                    this.setButtonLoading(this.anonymousLoginButton, false);
+                });
+        });
+        
         this.emailLoginShowButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
             this.loginScreen.classList.add('hidden');
             this.emailLoginScreen.classList.remove('hidden');
         });
+        
         this.backToMainLoginButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
             this.emailLoginScreen.classList.add('hidden');
             this.loginScreen.classList.remove('hidden');
         });
-        this.emailLoginButton.addEventListener('click', () => gameManager.handleEmailLogin());
-        this.emailSignupButton.addEventListener('click', () => gameManager.handleEmailSignup());
+        
+        this.emailLoginButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.setButtonLoading(this.emailLoginButton, true);
+            gameManager.handleEmailLogin()
+                .finally(() => {
+                    this.setButtonLoading(this.emailLoginButton, false);
+                });
+        });
+        
+        this.emailSignupButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.setButtonLoading(this.emailSignupButton, true);
+            gameManager.handleEmailSignup()
+                .finally(() => {
+                    this.setButtonLoading(this.emailSignupButton, false);
+                });
+        });
 
         // Botões de localização
         // Adicionar event listeners para os botões de localização
         const locationButtons = document.querySelectorAll('.location-button');
         locationButtons.forEach(button => {
             button.addEventListener('click', () => {
+                this.triggerHapticFeedback();
+                this.playButtonSound();
+                
                 // Remover classe 'selected' de todos os botões
                 locationButtons.forEach(btn => btn.classList.remove('selected'));
                 
@@ -135,27 +179,57 @@ export class UIManager {
         });
 
         this.enterButton.addEventListener('click', async () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            
             if (!gameManager.gameState.selectedLocation) return;
             try {
+                this.setButtonLoading(this.enterButton, true);
                 await gameManager.el.sceneEl.enterAR();
             } catch (e) { 
                 this.showNotification("Erro ao iniciar AR: " + e.message); 
+            } finally {
+                this.setButtonLoading(this.enterButton, false);
             }
         });
 
         // Botões de inventário
-        this.inventoryIconContainer.addEventListener('click', () => this.inventoryModal.classList.remove('hidden'));
-        this.closeInventoryButton.addEventListener('click', () => this.inventoryModal.classList.add('hidden'));
-        this.depositButton.addEventListener('click', () => gameManager.startQrScanner());
+        this.inventoryIconContainer.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.inventoryModal.classList.remove('hidden');
+        });
+        
+        this.closeInventoryButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.inventoryModal.classList.add('hidden');
+        });
+        
+        this.depositButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            gameManager.startQrScanner();
+        });
 
         // Botões do scanner QR
-        this.closeScannerButton.addEventListener('click', () => gameManager.stopQrScanner());
+        this.closeScannerButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            gameManager.stopQrScanner();
+        });
 
         // Controles do Proton Pack
-        this.protonPackIcon.addEventListener('mousedown', () => gameManager.startCapture());
+        this.protonPackIcon.addEventListener('mousedown', () => {
+            this.triggerHapticFeedback();
+            gameManager.startCapture();
+        });
+        
         this.protonPackIcon.addEventListener('mouseup', () => gameManager.cancelCapture());
         this.protonPackIcon.addEventListener('mouseleave', () => gameManager.cancelCapture());
-        this.protonPackIcon.addEventListener('touchstart', () => gameManager.startCapture());
+        
+        this.protonPackIcon.addEventListener('touchstart', () => {
+            this.triggerHapticFeedback();
+            gameManager.startCapture();
+        });
+        
         this.protonPackIcon.addEventListener('touchend', () => gameManager.cancelCapture());
         this.protonPackIcon.addEventListener('contextmenu', (e) => { 
             e.preventDefault(); 
@@ -163,7 +237,10 @@ export class UIManager {
         });
 
         // Notificações
-        this.notificationCloseButton.addEventListener('click', () => this.hideNotification());
+        this.notificationCloseButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.hideNotification();
+        });
 
         // Evento de entrada em AR
         gameManager.el.sceneEl.addEventListener('enter-vr', () => {
@@ -171,7 +248,10 @@ export class UIManager {
         });
         
         // Adicionar evento de clique ao logo para abrir o menu AR
-        this.gameLogo.addEventListener('click', () => this.toggleARMenu(gameManager));
+        this.gameLogo.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.toggleARMenu(gameManager);
+        });
     }
 
     // Alterna a visibilidade do menu AR
@@ -292,21 +372,24 @@ export class UIManager {
         this.enterButton.style.display = enabled ? 'block' : 'none';
     }
 
-    // Mostra/esconde telas
+    // Mostra/esconde telas com animações
     showScreen(screenName) {
-        // Esconde todas as telas primeiro
+        // Esconde todas as telas primeiro com animação
         this.hideAllScreens();
         
-        // Mostra a tela solicitada
+        // Mostra a tela solicitada com animação
         switch(screenName) {
             case 'login':
                 this.loginScreen.classList.remove('hidden');
+                this.loginScreen.classList.add('slide-in');
                 break;
             case 'emailLogin':
                 this.emailLoginScreen.classList.remove('hidden');
+                this.emailLoginScreen.classList.add('slide-in');
                 break;
             case 'location':
                 this.locationScreen.classList.remove('hidden');
+                this.locationScreen.classList.add('slide-in');
                 break;
             case 'game':
                 this.gameUi.classList.remove('hidden');
@@ -320,14 +403,54 @@ export class UIManager {
         }
     }
 
-    // Esconde todas as telas
+    // Esconde todas as telas com animação
     hideAllScreens() {
-        this.loginScreen.classList.add('hidden');
-        this.emailLoginScreen.classList.add('hidden');
-        this.locationScreen.classList.add('hidden');
-        this.gameUi.classList.add('hidden');
-        this.inventoryModal.classList.add('hidden');
-        this.qrScannerScreen.classList.add('hidden');
+        const screens = [
+            this.loginScreen,
+            this.emailLoginScreen,
+            this.locationScreen,
+            this.gameUi,
+            this.inventoryModal,
+            this.qrScannerScreen
+        ];
+        
+        screens.forEach(screen => {
+            if (screen && !screen.classList.contains('hidden')) {
+                screen.classList.add('fade-out');
+                setTimeout(() => {
+                    screen.classList.add('hidden');
+                    screen.classList.remove('fade-out');
+                }, 500);
+            }
+        });
+    }
+
+    // Adiciona efeito de loading ao botão
+    setButtonLoading(button, isLoading) {
+        if (isLoading) {
+            button.classList.add('loading');
+            button.disabled = true;
+        } else {
+            button.classList.remove('loading');
+            button.disabled = false;
+        }
+    }
+
+    // Efeitos hapticos e sonoros
+    triggerHapticFeedback() {
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    }
+
+    playButtonSound() {
+        // Se houver um áudio de clique no HTML
+        // const clickSound = document.getElementById('button-click-sound');
+        // if (clickSound) {
+        //     clickSound.currentTime = 0;
+        //     clickSound.play().catch(e => console.log("Audio play failed:", e));
+        // }
+        // Comentado temporariamente até adicionar o arquivo de áudio
     }
 
     // Marca um botão de localização como selecionado
