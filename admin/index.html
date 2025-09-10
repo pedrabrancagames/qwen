@@ -13,6 +13,53 @@
             <h1>Painel Administrativo - Ghost Squad</h1>
         </header>
         
+        <nav id="main-nav" class="main-nav" style="display: none;">
+            <ul class="nav-list">
+                <li class="nav-item active">
+                    <a href="#dashboard" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#users" class="nav-link">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-label">Usuários</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#reports" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-label">Relatórios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#settings" class="nav-link">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Configurações</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#locations" class="nav-link">
+                        <span class="nav-icon">📍</span>
+                        <span class="nav-label">Localizações</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#logs" class="nav-link">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-label">Logs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#system-logs" class="nav-link">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-label">Sistema</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
         <main id="main-content">
             <div id="login-section" class="section">
                 <h2>Login Administrativo</h2>
@@ -40,6 +87,76 @@
                 </div>
                 <div id="dashboard-content">
                     <!-- Conteúdo do dashboard será carregado aqui -->
+                </div>
+            </div>
+            
+            <div id="users-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Gerenciamento de Usuários</h2>
+                    <button id="back-to-dashboard-users" class="btn-secondary">Voltar ao Dashboard</button>
+                </div>
+                <div id="users-content">
+                    <!-- Conteúdo de usuários será carregado aqui -->
+                </div>
+            </div>
+            
+            <div id="user-detail-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Detalhes do Usuário</h2>
+                    <button id="back-to-users" class="btn-secondary">Voltar para Lista</button>
+                </div>
+                <div id="user-detail-content">
+                    <!-- Detalhes do usuário serão carregados aqui -->
+                </div>
+            </div>
+            
+            <div id="reports-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Relatórios e Estatísticas</h2>
+                    <button id="back-to-dashboard-reports" class="btn-secondary">Voltar ao Dashboard</button>
+                </div>
+                <div id="reports-content">
+                    <!-- Conteúdo de relatórios será carregado aqui -->
+                </div>
+            </div>
+            
+            <div id="settings-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Configurações do Jogo</h2>
+                    <button id="back-to-dashboard-settings" class="btn-secondary">Voltar ao Dashboard</button>
+                </div>
+                <div id="settings-content">
+                    <!-- Conteúdo de configurações será carregado aqui -->
+                </div>
+            </div>
+            
+            <div id="locations-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Gerenciamento de Localizações</h2>
+                    <button id="back-to-dashboard-locations" class="btn-secondary">Voltar ao Dashboard</button>
+                </div>
+                <div id="locations-content">
+                    <!-- Conteúdo de localizações será carregado aqui -->
+                </div>
+            </div>
+            
+            <div id="logs-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Logs e Auditoria</h2>
+                    <button id="back-to-dashboard-logs" class="btn-secondary">Voltar ao Dashboard</button>
+                </div>
+                <div id="logs-content">
+                    <!-- Conteúdo de logs será carregado aqui -->
+                </div>
+            </div>
+            
+            <div id="system-logs-section" class="section" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Logs do Sistema</h2>
+                    <button id="back-to-dashboard-system-logs" class="btn-secondary">Voltar ao Dashboard</button>
+                </div>
+                <div id="system-logs-content">
+                    <!-- Conteúdo de logs do sistema será carregado aqui -->
                 </div>
             </div>
         </main>
