@@ -143,11 +143,9 @@ export class GameStateManager {
         }
 
         try {
-            // Importar as funções necessárias do Firebase
-            const { ref, get, set } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
-            
-            const locationsRef = ref(this.firebaseDatabase, 'locations');
-            const snapshot = await get(locationsRef);
+            // Usar as funções do Firebase diretamente do objeto database
+            const locationsRef = this.firebaseDatabase.ref('locations');
+            const snapshot = await locationsRef.once('value');
             let locationsData = snapshot.val() || {};
 
             // Se não houver localizações no Firebase, criar as padrão
@@ -174,7 +172,7 @@ export class GameStateManager {
                 };
                 
                 // Salvar localizações padrão no Firebase
-                await set(locationsRef, defaultLocations);
+                await locationsRef.set(defaultLocations);
                 locationsData = defaultLocations;
             }
 

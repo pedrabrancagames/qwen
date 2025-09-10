@@ -131,6 +131,8 @@ export class AuthManager {
                 }
                 if (this.gameManager.uiManager && this.gameManager.uiManager.locationScreen) {
                     this.gameManager.uiManager.locationScreen.classList.remove('hidden');
+                    // Carregar áreas de caça quando mostrar a tela de localização
+                    this.gameManager.uiManager.loadLocationButtons(this.gameManager);
                 }
             }).catch((error) => {
                 console.error("Error saving user to database:", error);

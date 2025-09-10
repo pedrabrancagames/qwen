@@ -55,7 +55,7 @@ export class UIManager {
     }
 
     // Inicializa elementos da interface
-    async initializeUIElements(gameManager) {
+    initializeUIElements(gameManager) {
         this.loginScreen = document.getElementById('login-screen');
         this.locationScreen = document.getElementById('location-screen');
         this.enterButton = document.getElementById('enter-button');
@@ -95,18 +95,49 @@ export class UIManager {
         // Elementos do menu AR
         this.gameLogo = document.getElementById('game-logo');
         
-        // Carregar áreas de caça dinamicamente
-        await this.loadLocationButtons(gameManager);
+        // Carregar áreas de caça dinamicamente após o login
+        // Vamos adicionar um listener para quando o usuário fizer login
+        this.loadLocationButtonsAfterLogin(gameManager);
+    }
+
+    // Configura o carregamento das áreas de caça após o login
+    loadLocationButtonsAfterLogin(gameManager) {
+        // Adicionar um listener para quando o usuário fizer login
+        if (gameManager.authManager && gameManager.authManager.auth) {
+            // Usar onAuthStateChanged para carregar as áreas de caça quando o usuário fizer login
+            gameManager.authManager.auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Usuário logado, carregar áreas de caça
+                    this.loadLocationButtons(gameManager);
+                }
+            });
+        }
     }
 
     // Carrega os botões de localização dinamicamente do Firebase
-    async loadLocationButtons(gameManager) {
-        try {
-            // Obter localizações do Firebase
-            const locations = await gameManager.gameState.getLocations();
+    loadLocationButtons(gameManager) {
+        // Verificar se o gameState e o método getLocations existem
+        if (!gameManager || !gameManager.gameState || typeof gameManager.gameState.getLocations !== 'function') {
+            console.error('Erro: gameState ou método getLocations não disponível');
+            return;
+        }
+        
+        // Obter localizações do Firebase
+        gameManager.gameState.getLocations().then((locations) => {
+            // Verificar se locations é um objeto válido
+            if (!locations || typeof locations !== 'object') {
+                console.error('Erro: locations não é um objeto válido', locations);
+                return;
+            }
             
             // Obter o container dos botões de localização
             const locationButtonsContainer = document.getElementById('location-buttons-container');
+            
+            // Verificar se o container existe
+            if (!locationButtonsContainer) {
+                console.error('Erro: container de botões de localização não encontrado');
+                return;
+            }
             
             // Limpar o container
             locationButtonsContainer.innerHTML = '';
@@ -122,10 +153,10 @@ export class UIManager {
             
             // Atualizar os event listeners dos botões de localização
             this.updateLocationButtonListeners(gameManager);
-        } catch (error) {
+        }).catch((error) => {
             console.error('Erro ao carregar botões de localização:', error);
             // Em caso de erro, manter os botões padrão do HTML
-        }
+        });
     }
 
     // Adiciona event listeners
@@ -191,7 +222,7 @@ export class UIManager {
         // Adicionar event listeners para os botões de localização
         const locationButtons = document.querySelectorAll('.location-button');
         locationButtons.forEach(button => {
-            button.addEventListener('click', async () => {
+            button.addEventListener('click', () => {
                 this.triggerHapticFeedback();
                 this.playButtonSound();
                 
@@ -205,10 +236,14 @@ export class UIManager {
                 const locationName = button.getAttribute('data-location-name');
                 
                 // Definir a localização selecionada no gameState
-                await gameManager.gameState.setSelectedLocation(locationName);
-                
-                // Habilitar o botão de entrar
-                this.setEnterButtonEnabled(true);
+                gameManager.gameState.setSelectedLocation(locationName).then((success) => {
+                    if (success) {
+                        // Habilitar o botão de entrar
+                        this.setEnterButtonEnabled(true);
+                    }
+                }).catch((error) => {
+                    console.error('Erro ao definir localização:', error);
+                });
             });
         });
     }

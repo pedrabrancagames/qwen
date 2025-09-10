@@ -23,7 +23,7 @@ AFRAME.registerComponent('game-manager', {
         this.rankingsManager = new RankingsManager(this);
 
         // Inicializar elementos da interface
-        await this.uiManager.initializeUIElements(this);
+        this.uiManager.initializeUIElements(this);
         this.arManager.initializeARElements();
         this.mapManager.setMinimapElement(this.uiManager.minimapElement);
         this.rankingsManager.initializeRankingsElements();
