@@ -242,6 +242,12 @@ export class AdminAuthManager {
      */
     async logAdminAction(adminId, action, details = {}) {
         try {
+            // Verificar se adminId está definido
+            if (!adminId) {
+                console.warn('adminId não definido, pulando registro de log');
+                return;
+            }
+            
             const logEntry = {
                 adminId: adminId,
                 action: action,
