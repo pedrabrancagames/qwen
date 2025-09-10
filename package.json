@@ -46,6 +46,11 @@
     "moduleNameMapper": {
       "html5-qrcode": "<rootDir>/tests/__mocks__/html5-qrcode.js"
     },
-    "setupFilesAfterEnv": ["<rootDir>/tests/setupTests.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setupTests.js"
+    ]
+  },
+  "dependencies": {
+    "@testsprite/testsprite-mcp": "^0.0.13"
   }
 }
