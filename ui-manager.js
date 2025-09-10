@@ -157,7 +157,7 @@ export class UIManager {
         // Adicionar event listeners para os botões de localização
         const locationButtons = document.querySelectorAll('.location-button');
         locationButtons.forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', async () => {
                 this.triggerHapticFeedback();
                 this.playButtonSound();
                 
