@@ -17,14 +17,11 @@ export class GameStateManager {
         this.CAPTURE_DURATION_STRONG = 8000;
         this.INVENTORY_LIMIT = 5;
         this.ECTO1_UNLOCK_COUNT = 5;
-        this.locations = {
-            "Praça Central": { lat: -27.630913, lon: -48.679793 },
-            "Parque da Cidade": { lat: -27.639797, lon: -48.667749 },
-            "Casa do Vô": { lat: -27.51563471648395, lon: -48.64996016391755 }
-        };
+        this.locations = {};
         this.ECTO1_POSITION = {};
         this.ghostData = {};
         this.selectedLocation = null;
+        this.firebaseDatabase = null;
     }
 
     // Atualiza as estatísticas do usuário
@@ -55,9 +52,10 @@ export class GameStateManager {
     }
 
     // Define a localização selecionada
-    setSelectedLocation(locationName) {
-        if (this.locations[locationName]) {
-            this.selectedLocation = this.locations[locationName];
+    async setSelectedLocation(locationName) {
+        const locations = await this.getLocations();
+        if (locations[locationName]) {
+            this.selectedLocation = locations[locationName];
             // Atualiza a posição do ECTO-1 com base na localização selecionada
             this.ECTO1_POSITION = {
                 lat: this.selectedLocation.lat + 0.0005,
@@ -128,8 +126,48 @@ export class GameStateManager {
         return this.selectedLocation;
     }
 
-    // Obtém todas as localizações disponíveis
-    getLocations() {
-        return this.locations;
+    // Define a instância do Firebase Database
+    setFirebaseDatabase(database) {
+        this.firebaseDatabase = database;
+    }
+
+    // Obtém todas as localizações disponíveis do Firebase
+    async getLocations() {
+        if (!this.firebaseDatabase) {
+            console.warn('Firebase Database não configurado, usando localizações padrão');
+            return {
+                "Praça Central": { lat: -27.630913, lon: -48.679793 },
+                "Parque da Cidade": { lat: -27.639797, lon: -48.667749 },
+                "Casa do Vô": { lat: -27.51563471648395, lon: -48.64996016391755 }
+            };
+        }
+
+        try {
+            const locationsRef = this.firebaseDatabase.ref('locations');
+            const snapshot = await locationsRef.once('value');
+            const locationsData = snapshot.val() || {};
+
+            // Converter os dados do Firebase para o formato esperado pelo jogo
+            const locations = {};
+            for (const [key, location] of Object.entries(locationsData)) {
+                // Apenas incluir localizações ativas
+                if (location.active !== false) {
+                    locations[location.name] = {
+                        lat: location.lat,
+                        lon: location.lon
+                    };
+                }
+            }
+
+            return locations;
+        } catch (error) {
+            console.error('Erro ao obter localizações do Firebase:', error);
+            // Retornar localizações padrão em caso de erro
+            return {
+                "Praça Central": { lat: -27.630913, lon: -48.679793 },
+                "Parque da Cidade": { lat: -27.639797, lon: -48.667749 },
+                "Casa do Vô": { lat: -27.51563471648395, lon: -48.64996016391755 }
+            };
+        }
     }
 }

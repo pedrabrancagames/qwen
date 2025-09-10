@@ -171,7 +171,7 @@ export class UIManager {
                 const locationName = button.getAttribute('data-location-name');
                 
                 // Definir a localização selecionada no gameState
-                gameManager.gameState.setSelectedLocation(locationName);
+                await gameManager.gameState.setSelectedLocation(locationName);
                 
                 // Habilitar o botão de entrar
                 this.setEnterButtonEnabled(true);

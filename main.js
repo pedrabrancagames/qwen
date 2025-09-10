@@ -45,6 +45,9 @@ AFRAME.registerComponent('game-manager', {
         this.auth = auth;
         this.database = database;
         
+        // Passar a instância do Firebase Database para o GameStateManager
+        this.gameState.setFirebaseDatabase(database);
+        
         this.uiManager.addEventListeners(this);
 
         this.gameInitialized = false;
