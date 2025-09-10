@@ -33,7 +33,7 @@
   - Integrar com Firebase Realtime Database para dados ao vivo
   - _Requisitos: 3.1_
 
-- [ ] 3.2 Implementar gráficos de atividade
+- [x] 3.2 Implementar gráficos de atividade
   - Criar `admin/components/charts.js` usando biblioteca de gráficos (Chart.js)
   - Implementar gráfico de atividade dos últimos 30 dias
   - Adicionar gráfico de distribuição de capturas por localização

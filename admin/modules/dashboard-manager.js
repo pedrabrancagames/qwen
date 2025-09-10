@@ -82,16 +82,12 @@ export class DashboardManager {
             <div class="dashboard-charts">
                 <div class="chart-container">
                     <h3>Atividade dos Últimos 30 Dias</h3>
-                    <div id="activity-chart" class="chart-placeholder">
-                        <p>Carregando gráfico...</p>
-                    </div>
+                    <canvas id="activity-chart-canvas" class="chart-canvas"></canvas>
                 </div>
                 
                 <div class="chart-container">
                     <h3>Distribuição de Capturas por Localização</h3>
-                    <div id="location-chart" class="chart-placeholder">
-                        <p>Carregando gráfico...</p>
-                    </div>
+                    <canvas id="location-chart-canvas" class="chart-canvas"></canvas>
                 </div>
             </div>
             
@@ -271,47 +267,21 @@ export class DashboardManager {
      * Carrega os dados para os gráficos
      */
     async loadCharts() {
-        // Este método será implementado quando adicionarmos o suporte a gráficos
-        const activityChart = this.dashboardElement.querySelector('#activity-chart');
-        const locationChart = this.dashboardElement.querySelector('#location-chart');
-        
-        if (activityChart) {
-            activityChart.innerHTML = `
-                <div class="chart-placeholder-content">
-                    <p>Gráfico de atividade dos últimos 30 dias</p>
-                    <div class="chart-bars">
-                        ${Array.from({length: 30}, (_, i) => `
-                            <div class="chart-bar" style="height: ${Math.floor(Math.random() * 80) + 20}%"></div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-        
-        if (locationChart) {
-            locationChart.innerHTML = `
-                <div class="chart-placeholder-content">
-                    <p>Distribuição de capturas por localização</p>
-                    <div class="location-stats">
-                        <div class="location-item">
-                            <span class="location-name">Parque dos Dinossauros</span>
-                            <span class="location-value">120 capturas</span>
-                        </div>
-                        <div class="location-item">
-                            <span class="location-name">Museu de História Natural</span>
-                            <span class="location-value">95 capturas</span>
-                        </div>
-                        <div class="location-item">
-                            <span class="location-name">Biblioteca Central</span>
-                            <span class="location-value">78 capturas</span>
-                        </div>
-                        <div class="location-item">
-                            <span class="location-name">Estação de Trem</span>
-                            <span class="location-value">65 capturas</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+        try {
+            // Importar componente de gráficos
+            const { initCharts } = await import('../components/charts.js');
+            
+            // Obter elementos dos gráficos
+            const activityChartElement = this.dashboardElement.querySelector('#activity-chart-canvas');
+            const locationChartElement = this.dashboardElement.querySelector('#location-chart-canvas');
+            
+            if (activityChartElement && locationChartElement) {
+                // Inicializar gráficos
+                initCharts(activityChartElement, locationChartElement, this.database);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar gráficos:', error);
+            this.showError('Erro ao carregar gráficos');
         }
     }
     
