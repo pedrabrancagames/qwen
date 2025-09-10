@@ -20,7 +20,7 @@
   - Implementar feedback visual para estados de loading e erro
   - _Requisitos: 1.1, 6.4_
 
-- [ ] 2.3 Configurar sistema de privilégios e segurança
+- [x] 2.3 Configurar sistema de privilégios e segurança
   - Implementar verificação de privilégios administrativos
   - Adicionar sistema de timeout automático após 30 minutos de inatividade
   - Criar middleware de proteção de rotas para seções administrativas
