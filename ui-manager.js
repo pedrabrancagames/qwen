@@ -55,7 +55,7 @@ export class UIManager {
     }
 
     // Inicializa elementos da interface
-    initializeUIElements() {
+    async initializeUIElements(gameManager) {
         this.loginScreen = document.getElementById('login-screen');
         this.locationScreen = document.getElementById('location-screen');
         this.enterButton = document.getElementById('enter-button');
@@ -94,6 +94,38 @@ export class UIManager {
         
         // Elementos do menu AR
         this.gameLogo = document.getElementById('game-logo');
+        
+        // Carregar áreas de caça dinamicamente
+        await this.loadLocationButtons(gameManager);
+    }
+
+    // Carrega os botões de localização dinamicamente do Firebase
+    async loadLocationButtons(gameManager) {
+        try {
+            // Obter localizações do Firebase
+            const locations = await gameManager.gameState.getLocations();
+            
+            // Obter o container dos botões de localização
+            const locationButtonsContainer = document.getElementById('location-buttons-container');
+            
+            // Limpar o container
+            locationButtonsContainer.innerHTML = '';
+            
+            // Criar botões para cada localização
+            for (const [locationName, locationData] of Object.entries(locations)) {
+                const button = document.createElement('button');
+                button.className = 'location-button ui-element';
+                button.setAttribute('data-location-name', locationName);
+                button.textContent = locationName;
+                locationButtonsContainer.appendChild(button);
+            }
+            
+            // Atualizar os event listeners dos botões de localização
+            this.updateLocationButtonListeners(gameManager);
+        } catch (error) {
+            console.error('Erro ao carregar botões de localização:', error);
+            // Em caso de erro, manter os botões padrão do HTML
+        }
     }
 
     // Adiciona event listeners
@@ -152,8 +184,10 @@ export class UIManager {
                     this.setButtonLoading(this.emailSignupButton, false);
                 });
         });
-
-        // Botões de localização
+    }
+    
+    // Atualiza os event listeners dos botões de localização
+    updateLocationButtonListeners(gameManager) {
         // Adicionar event listeners para os botões de localização
         const locationButtons = document.querySelectorAll('.location-button');
         locationButtons.forEach(button => {
@@ -176,81 +210,6 @@ export class UIManager {
                 // Habilitar o botão de entrar
                 this.setEnterButtonEnabled(true);
             });
-        });
-
-        this.enterButton.addEventListener('click', async () => {
-            this.triggerHapticFeedback();
-            this.playButtonSound();
-            
-            if (!gameManager.gameState.selectedLocation) return;
-            try {
-                this.setButtonLoading(this.enterButton, true);
-                await gameManager.el.sceneEl.enterAR();
-            } catch (e) { 
-                this.showNotification("Erro ao iniciar AR: " + e.message); 
-            } finally {
-                this.setButtonLoading(this.enterButton, false);
-            }
-        });
-
-        // Botões de inventário
-        this.inventoryIconContainer.addEventListener('click', () => {
-            this.triggerHapticFeedback();
-            this.inventoryModal.classList.remove('hidden');
-        });
-        
-        this.closeInventoryButton.addEventListener('click', () => {
-            this.triggerHapticFeedback();
-            this.inventoryModal.classList.add('hidden');
-        });
-        
-        this.depositButton.addEventListener('click', () => {
-            this.triggerHapticFeedback();
-            this.playButtonSound();
-            gameManager.startQrScanner();
-        });
-
-        // Botões do scanner QR
-        this.closeScannerButton.addEventListener('click', () => {
-            this.triggerHapticFeedback();
-            gameManager.stopQrScanner();
-        });
-
-        // Controles do Proton Pack
-        this.protonPackIcon.addEventListener('mousedown', () => {
-            this.triggerHapticFeedback();
-            gameManager.startCapture();
-        });
-        
-        this.protonPackIcon.addEventListener('mouseup', () => gameManager.cancelCapture());
-        this.protonPackIcon.addEventListener('mouseleave', () => gameManager.cancelCapture());
-        
-        this.protonPackIcon.addEventListener('touchstart', () => {
-            this.triggerHapticFeedback();
-            gameManager.startCapture();
-        });
-        
-        this.protonPackIcon.addEventListener('touchend', () => gameManager.cancelCapture());
-        this.protonPackIcon.addEventListener('contextmenu', (e) => { 
-            e.preventDefault(); 
-            e.stopPropagation(); 
-        });
-
-        // Notificações
-        this.notificationCloseButton.addEventListener('click', () => {
-            this.triggerHapticFeedback();
-            this.hideNotification();
-        });
-
-        // Evento de entrada em AR
-        gameManager.el.sceneEl.addEventListener('enter-vr', () => {
-            gameManager.initGame();
-        });
-        
-        // Adicionar evento de clique ao logo para abrir o menu AR
-        this.gameLogo.addEventListener('click', () => {
-            this.triggerHapticFeedback();
-            this.toggleARMenu(gameManager);
         });
     }
 

@@ -143,9 +143,40 @@ export class GameStateManager {
         }
 
         try {
-            const locationsRef = this.firebaseDatabase.ref('locations');
-            const snapshot = await locationsRef.once('value');
-            const locationsData = snapshot.val() || {};
+            // Importar as funções necessárias do Firebase
+            const { ref, get, set } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+            
+            const locationsRef = ref(this.firebaseDatabase, 'locations');
+            const snapshot = await get(locationsRef);
+            let locationsData = snapshot.val() || {};
+
+            // Se não houver localizações no Firebase, criar as padrão
+            if (Object.keys(locationsData).length === 0) {
+                const defaultLocations = {
+                    "location1": {
+                        name: "Praça Central",
+                        lat: -27.630913,
+                        lon: -48.679793,
+                        active: true
+                    },
+                    "location2": {
+                        name: "Parque da Cidade",
+                        lat: -27.639797,
+                        lon: -48.667749,
+                        active: true
+                    },
+                    "location3": {
+                        name: "Casa do Vô",
+                        lat: -27.51563471648395,
+                        lon: -48.64996016391755,
+                        active: true
+                    }
+                };
+                
+                // Salvar localizações padrão no Firebase
+                await set(locationsRef, defaultLocations);
+                locationsData = defaultLocations;
+            }
 
             // Converter os dados do Firebase para o formato esperado pelo jogo
             const locations = {};
