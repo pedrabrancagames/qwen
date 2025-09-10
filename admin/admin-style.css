@@ -79,6 +79,10 @@ footer {
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
+.form-group input.invalid {
+    border-color: #e74c3c;
+}
+
 button {
     background-color: #3498db;
     color: white;
@@ -99,6 +103,14 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.btn-secondary {
+    background-color: #95a5a6;
+}
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+}
+
 /* Mensagens de erro */
 .error-message {
     background-color: #e74c3c;
@@ -108,12 +120,33 @@ button:disabled {
     margin-top: 1rem;
 }
 
+.field-error {
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
 .success-message {
     background-color: #2ecc71;
     color: white;
     padding: 1rem;
     border-radius: 4px;
     margin-top: 1rem;
+}
+
+/* Loading spinner */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* Grid responsivo */
@@ -136,19 +169,12 @@ button:disabled {
     color: #2c3e50;
 }
 
-/* Loading spinner */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+/* Dashboard */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
 /* Responsividade */
@@ -163,5 +189,14 @@ button:disabled {
     
     .grid {
         grid-template-columns: 1fr;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .dashboard-header button {
+        margin-top: 1rem;
     }
 }

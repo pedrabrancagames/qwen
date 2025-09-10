@@ -10,6 +10,10 @@ const loginSection = document.getElementById('login-section');
 const dashboardSection = document.getElementById('dashboard-section');
 const loginForm = document.getElementById('admin-login-form');
 const loginError = document.getElementById('login-error');
+const emailInput = document.getElementById('admin-email');
+const passwordInput = document.getElementById('admin-password');
+const emailError = document.getElementById('email-error');
+const passwordError = document.getElementById('password-error');
 
 // Instanciando o gerenciador de autenticação
 const adminAuth = new AdminAuthManager(firebase);
@@ -43,6 +47,7 @@ function showLogin() {
     loginSection.style.display = 'block';
     dashboardSection.style.display = 'none';
     loginError.style.display = 'none';
+    clearFormErrors();
 }
 
 // Função para mostrar o dashboard
@@ -58,23 +63,100 @@ function showDashboard() {
 function loadDashboard() {
     const dashboardContent = document.getElementById('dashboard-content');
     dashboardContent.innerHTML = `
-        <h3>Bem-vindo ao Painel Administrativo</h3>
-        <p>Você está autenticado como administrador.</p>
-        <button id="logout-btn">Sair</button>
+        <div class="grid">
+            <div class="card">
+                <h3>Visão Geral</h3>
+                <p>Bem-vindo ao Painel Administrativo do Ghost Squad.</p>
+                <p>Aqui você pode gerenciar usuários, visualizar estatísticas e configurar o jogo.</p>
+            </div>
+            <div class="card">
+                <h3>Ações Rápidas</h3>
+                <ul>
+                    <li><a href="#" id="manage-users-link">Gerenciar Usuários</a></li>
+                    <li><a href="#" id="view-stats-link">Visualizar Estatísticas</a></li>
+                    <li><a href="#" id="manage-config-link">Configurações do Jogo</a></li>
+                </ul>
+            </div>
+        </div>
     `;
     
     // Adicionar evento de logout
     document.getElementById('logout-btn').addEventListener('click', () => {
         adminAuth.logout();
     });
+    
+    // Adicionar eventos para links do dashboard
+    document.getElementById('manage-users-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Funcionalidade de gerenciamento de usuários em desenvolvimento.');
+    });
+    
+    document.getElementById('view-stats-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Funcionalidade de visualização de estatísticas em desenvolvimento.');
+    });
+    
+    document.getElementById('manage-config-link')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Funcionalidade de configurações do jogo em desenvolvimento.');
+    });
+}
+
+// Função para limpar erros do formulário
+function clearFormErrors() {
+    emailError.style.display = 'none';
+    passwordError.style.display = 'none';
+    emailInput.classList.remove('invalid');
+    passwordInput.classList.remove('invalid');
+}
+
+// Função para mostrar erro em campo específico
+function showFieldError(field, errorElement, message) {
+    field.classList.add('invalid');
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
+// Função para validar o formulário
+function validateForm() {
+    let isValid = true;
+    clearFormErrors();
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    
+    // Validar email
+    if (!email) {
+        showFieldError(emailInput, emailError, 'O email é obrigatório.');
+        isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+        showFieldError(emailInput, emailError, 'Por favor, insira um email válido.');
+        isValid = false;
+    }
+    
+    // Validar senha
+    if (!password) {
+        showFieldError(passwordInput, passwordError, 'A senha é obrigatória.');
+        isValid = false;
+    } else if (password.length < 6) {
+        showFieldError(passwordInput, passwordError, 'A senha deve ter pelo menos 6 caracteres.');
+        isValid = false;
+    }
+    
+    return isValid;
 }
 
 // Evento de envio do formulário de login
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const email = document.getElementById('admin-email').value;
-    const password = document.getElementById('admin-password').value;
+    // Validar formulário
+    if (!validateForm()) {
+        return;
+    }
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
     
     // Limpar mensagens de erro anteriores
     loginError.style.display = 'none';
@@ -106,14 +188,13 @@ function showError(message) {
 
 // Função para mostrar sucesso
 function showSuccess(message) {
-    const successMessage = document.createElement('div');
-    successMessage.className = 'success-message';
-    successMessage.textContent = message;
-    loginSection.appendChild(successMessage);
+    const successElement = document.getElementById('login-success');
+    successElement.textContent = message;
+    successElement.style.display = 'block';
     
     // Remover mensagem após 3 segundos
     setTimeout(() => {
-        successMessage.remove();
+        successElement.style.display = 'none';
     }, 3000);
 }
 

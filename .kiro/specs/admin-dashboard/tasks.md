@@ -7,14 +7,14 @@
   - Configurar `admin/admin-main.js` como controlador principal da aplicação
   - _Requisitos: 1.1, 6.1, 6.2_
 
-- [ ] 2. Implementar sistema de autenticação administrativa
-- [ ] 2.1 Criar módulo de autenticação para administradores
+- [x] 2. Implementar sistema de autenticação administrativa
+- [x] 2.1 Criar módulo de autenticação para administradores
   - Implementar `admin/modules/admin-auth.js` com classe AdminAuthManager
   - Adicionar métodos de login, logout e verificação de privilégios
   - Integrar com Firebase Auth usando a mesma configuração do jogo principal
   - _Requisitos: 1.1, 1.2, 1.3_
 
-- [ ] 2.2 Implementar interface de login administrativo
+- [x] 2.2 Implementar interface de login administrativo
   - Criar formulário de login específico para administradores no HTML
   - Adicionar validação client-side para campos de email e senha
   - Implementar feedback visual para estados de loading e erro
