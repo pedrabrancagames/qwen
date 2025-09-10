@@ -26,8 +26,8 @@
   - Criar middleware de proteção de rotas para seções administrativas
   - _Requisitos: 1.3, 5.5_
 
-- [ ] 3. Desenvolver painel principal (dashboard)
-- [ ] 3.1 Criar componente do dashboard principal
+- [x] 3. Desenvolver painel principal (dashboard)
+- [x] 3.1 Criar componente do dashboard principal
   - Implementar `admin/components/dashboard.js` com métricas em tempo real
   - Adicionar cards para total de usuários, usuários ativos e fantasmas capturados
   - Integrar com Firebase Realtime Database para dados ao vivo

@@ -1,5 +1,6 @@
 // Importando módulos
 import { AdminAuthManager } from './modules/admin-auth.js';
+import { initDashboard } from './components/dashboard.js';
 
 // Inicializando o Firebase
 const firebaseConfig = window.firebaseConfig;
@@ -17,6 +18,7 @@ const passwordError = document.getElementById('password-error');
 
 // Instanciando o gerenciador de autenticação
 const adminAuth = new AdminAuthManager(firebase);
+let dashboardManager = null;
 
 // Verificando se o usuário já está autenticado
 adminAuth.onAuthStateChanged((user) => {
@@ -63,42 +65,20 @@ function showDashboard() {
 function loadDashboard() {
     const dashboardContent = document.getElementById('dashboard-content');
     dashboardContent.innerHTML = `
-        <div class="grid">
-            <div class="card">
-                <h3>Visão Geral</h3>
-                <p>Bem-vindo ao Painel Administrativo do Ghost Squad.</p>
-                <p>Aqui você pode gerenciar usuários, visualizar estatísticas e configurar o jogo.</p>
-            </div>
-            <div class="card">
-                <h3>Ações Rápidas</h3>
-                <ul>
-                    <li><a href="#" id="manage-users-link">Gerenciar Usuários</a></li>
-                    <li><a href="#" id="view-stats-link">Visualizar Estatísticas</a></li>
-                    <li><a href="#" id="manage-config-link">Configurações do Jogo</a></li>
-                </ul>
-            </div>
+        <div id="dashboard-container">
+            <!-- O dashboard será carregado aqui -->
         </div>
     `;
+    
+    // Inicializar o dashboard
+    const dashboardContainer = document.getElementById('dashboard-container');
+    if (dashboardContainer) {
+        dashboardManager = initDashboard(dashboardContainer, firebase.database());
+    }
     
     // Adicionar evento de logout
     document.getElementById('logout-btn').addEventListener('click', () => {
         adminAuth.logout();
-    });
-    
-    // Adicionar eventos para links do dashboard
-    document.getElementById('manage-users-link')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Funcionalidade de gerenciamento de usuários em desenvolvimento.');
-    });
-    
-    document.getElementById('view-stats-link')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Funcionalidade de visualização de estatísticas em desenvolvimento.');
-    });
-    
-    document.getElementById('manage-config-link')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('Funcionalidade de configurações do jogo em desenvolvimento.');
     });
 }
 
