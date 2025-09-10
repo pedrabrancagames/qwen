@@ -1,6 +1,6 @@
 # Plano de Implementação - Painel Administrativo Ghost Squad
 
-- [ ] 1. Configurar estrutura base do projeto administrativo
+- [x] 1. Configurar estrutura base do projeto administrativo
   - Criar diretório `admin/` na raiz do projeto
   - Implementar `admin/index.html` com estrutura básica da SPA
   - Criar `admin/admin-style.css` com estilos base e sistema de grid responsivo
