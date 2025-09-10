@@ -11,12 +11,16 @@ export class AuthManager {
     }
 
     initializeApp(firebaseConfig) {
+        console.log('Inicializando Firebase com configuração:', firebaseConfig);
         // Initialize Firebase app
         const app = initializeApp(firebaseConfig);
         
         // Get auth and database instances correctly
         this.auth = getAuth(app);
         this.database = getDatabase(app);
+        
+        console.log('Firebase Auth:', this.auth);
+        console.log('Firebase Database:', this.database);
         
         // Set up auth state listener
         onAuthStateChanged(this.auth, (user) => this.onAuthStateChanged(user));
@@ -118,6 +122,7 @@ export class AuthManager {
 
     onAuthStateChanged(user) {
         if (user) {
+            console.log('Usuário autenticado:', user);
             this.gameManager.currentUser = user;
             this.saveUserToDatabase(user).then(() => {
                 this.gameManager.updateInventoryUI();
@@ -132,12 +137,14 @@ export class AuthManager {
                 if (this.gameManager.uiManager && this.gameManager.uiManager.locationScreen) {
                     this.gameManager.uiManager.locationScreen.classList.remove('hidden');
                     // Carregar áreas de caça quando mostrar a tela de localização
+                    console.log('Carregando áreas de caça...');
                     this.gameManager.uiManager.loadLocationButtons(this.gameManager);
                 }
             }).catch((error) => {
                 console.error("Error saving user to database:", error);
             });
         } else {
+            console.log('Usuário deslogado');
             this.gameManager.currentUser = null;
             
             // Verificar se os elementos existem antes de manipulá-los

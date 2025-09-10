@@ -56,6 +56,7 @@ export class UIManager {
 
     // Inicializa elementos da interface
     initializeUIElements(gameManager) {
+        console.log('Inicializando elementos da interface...');
         this.loginScreen = document.getElementById('login-screen');
         this.locationScreen = document.getElementById('location-screen');
         this.enterButton = document.getElementById('enter-button');
@@ -98,24 +99,31 @@ export class UIManager {
         // Carregar áreas de caça dinamicamente após o login
         // Vamos adicionar um listener para quando o usuário fizer login
         this.loadLocationButtonsAfterLogin(gameManager);
+        console.log('Elementos da interface inicializados com sucesso');
     }
 
     // Configura o carregamento das áreas de caça após o login
     loadLocationButtonsAfterLogin(gameManager) {
+        console.log('Configurando carregamento de áreas de caça após login...');
         // Adicionar um listener para quando o usuário fizer login
         if (gameManager.authManager && gameManager.authManager.auth) {
             // Usar onAuthStateChanged para carregar as áreas de caça quando o usuário fizer login
             gameManager.authManager.auth.onAuthStateChanged((user) => {
                 if (user) {
                     // Usuário logado, carregar áreas de caça
+                    console.log('Usuário logado, carregando áreas de caça...');
                     this.loadLocationButtons(gameManager);
                 }
             });
+        } else {
+            console.error('AuthManager ou auth não disponível');
         }
     }
 
     // Carrega os botões de localização dinamicamente do Firebase
     loadLocationButtons(gameManager) {
+        console.log('Carregando botões de localização...');
+        
         // Verificar se o gameState e o método getLocations existem
         if (!gameManager || !gameManager.gameState || typeof gameManager.gameState.getLocations !== 'function') {
             console.error('Erro: gameState ou método getLocations não disponível');
@@ -124,6 +132,8 @@ export class UIManager {
         
         // Obter localizações do Firebase
         gameManager.gameState.getLocations().then((locations) => {
+            console.log('Localizações obtidas:', locations);
+            
             // Verificar se locations é um objeto válido
             if (!locations || typeof locations !== 'object') {
                 console.error('Erro: locations não é um objeto válido', locations);
@@ -143,13 +153,17 @@ export class UIManager {
             locationButtonsContainer.innerHTML = '';
             
             // Criar botões para cada localização
+            let buttonCount = 0;
             for (const [locationName, locationData] of Object.entries(locations)) {
                 const button = document.createElement('button');
                 button.className = 'location-button ui-element';
                 button.setAttribute('data-location-name', locationName);
                 button.textContent = locationName;
                 locationButtonsContainer.appendChild(button);
+                buttonCount++;
             }
+            
+            console.log(`Carregadas ${buttonCount} áreas de caça do Firebase`);
             
             // Atualizar os event listeners dos botões de localização
             this.updateLocationButtonListeners(gameManager);
@@ -161,6 +175,8 @@ export class UIManager {
 
     // Adiciona event listeners
     addEventListeners(gameManager) {
+        console.log('Adicionando event listeners...');
+        
         // Botões de autenticação
         this.googleLoginButton.addEventListener('click', () => {
             this.triggerHapticFeedback();
@@ -215,31 +231,65 @@ export class UIManager {
                     this.setButtonLoading(this.emailSignupButton, false);
                 });
         });
+        
+        // Botão de entrar (iniciar caça)
+        this.enterButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            
+            if (!gameManager.gameState.selectedLocation) {
+                console.error('Nenhuma localização selecionada');
+                return;
+            }
+            
+            try {
+                this.setButtonLoading(this.enterButton, true);
+                gameManager.initGame();
+            } catch (e) { 
+                console.error("Erro ao iniciar jogo:", e);
+                this.showNotification("Erro ao iniciar jogo: " + e.message); 
+            } finally {
+                this.setButtonLoading(this.enterButton, false);
+            }
+        });
+        
+        console.log('Event listeners adicionados com sucesso');
     }
     
     // Atualiza os event listeners dos botões de localização
     updateLocationButtonListeners(gameManager) {
         // Adicionar event listeners para os botões de localização
         const locationButtons = document.querySelectorAll('.location-button');
+        console.log(`Encontrados ${locationButtons.length} botões de localização`);
+        
         locationButtons.forEach(button => {
-            button.addEventListener('click', () => {
+            // Remover event listeners antigos para evitar duplicação
+            const clone = button.cloneNode(true);
+            button.parentNode.replaceChild(clone, button);
+            
+            clone.addEventListener('click', () => {
                 this.triggerHapticFeedback();
                 this.playButtonSound();
                 
                 // Remover classe 'selected' de todos os botões
-                locationButtons.forEach(btn => btn.classList.remove('selected'));
+                document.querySelectorAll('.location-button').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
                 
                 // Adicionar classe 'selected' ao botão clicado
-                button.classList.add('selected');
+                clone.classList.add('selected');
                 
                 // Obter o nome da localização do atributo data
-                const locationName = button.getAttribute('data-location-name');
+                const locationName = clone.getAttribute('data-location-name');
+                console.log(`Selecionada a localização: ${locationName}`);
                 
                 // Definir a localização selecionada no gameState
                 gameManager.gameState.setSelectedLocation(locationName).then((success) => {
                     if (success) {
                         // Habilitar o botão de entrar
                         this.setEnterButtonEnabled(true);
+                    } else {
+                        console.error(`Falha ao definir localização: ${locationName}`);
                     }
                 }).catch((error) => {
                     console.error('Erro ao definir localização:', error);

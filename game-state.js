@@ -3,6 +3,8 @@
  * Gerencia o estado do jogo, incluindo inventário, pontos, níveis e desbloqueios
  */
 
+import { ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 export class GameStateManager {
     constructor() {
         this.userStats = {
@@ -53,17 +55,27 @@ export class GameStateManager {
 
     // Define a localização selecionada
     async setSelectedLocation(locationName) {
-        const locations = await this.getLocations();
-        if (locations[locationName]) {
-            this.selectedLocation = locations[locationName];
-            // Atualiza a posição do ECTO-1 com base na localização selecionada
-            this.ECTO1_POSITION = {
-                lat: this.selectedLocation.lat + 0.0005,
-                lon: this.selectedLocation.lon - 0.0005
-            };
-            return true;
+        try {
+            console.log(`Tentando definir localização: ${locationName}`);
+            const locations = await this.getLocations();
+            console.log('Localizações disponíveis:', locations);
+            if (locations[locationName]) {
+                this.selectedLocation = locations[locationName];
+                console.log('Localização selecionada:', this.selectedLocation);
+                // Atualiza a posição do ECTO-1 com base na localização selecionada
+                this.ECTO1_POSITION = {
+                    lat: this.selectedLocation.lat + 0.0005,
+                    lon: this.selectedLocation.lon - 0.0005
+                };
+                console.log('Posição do ECTO-1:', this.ECTO1_POSITION);
+                return true;
+            }
+            console.warn(`Localização "${locationName}" não encontrada`);
+            return false;
+        } catch (error) {
+            console.error('Erro ao definir localização selecionada:', error);
+            return false;
         }
-        return false;
     }
 
     // Gera dados para um novo fantasma
@@ -128,6 +140,7 @@ export class GameStateManager {
 
     // Define a instância do Firebase Database
     setFirebaseDatabase(database) {
+        console.log('Configurando Firebase Database:', database);
         this.firebaseDatabase = database;
     }
 
@@ -143,13 +156,18 @@ export class GameStateManager {
         }
 
         try {
-            // Usar as funções do Firebase diretamente do objeto database
-            const locationsRef = this.firebaseDatabase.ref('locations');
-            const snapshot = await locationsRef.once('value');
+            console.log('Obtendo localizações do Firebase...');
+            const locationsRef = ref(this.firebaseDatabase, 'locations');
+            console.log('Referência do Firebase criada:', locationsRef);
+            const snapshot = await get(locationsRef);
+            console.log('Snapshot obtido:', snapshot);
             let locationsData = snapshot.val() || {};
+
+            console.log('Dados das localizações do Firebase:', locationsData);
 
             // Se não houver localizações no Firebase, criar as padrão
             if (Object.keys(locationsData).length === 0) {
+                console.log('Nenhuma localização encontrada no Firebase, criando localizações padrão');
                 const defaultLocations = {
                     "location1": {
                         name: "Praça Central",
@@ -172,8 +190,9 @@ export class GameStateManager {
                 };
                 
                 // Salvar localizações padrão no Firebase
-                await locationsRef.set(defaultLocations);
+                await set(locationsRef, defaultLocations);
                 locationsData = defaultLocations;
+                console.log('Localizações padrão salvas no Firebase:', locationsData);
             }
 
             // Converter os dados do Firebase para o formato esperado pelo jogo
@@ -188,6 +207,7 @@ export class GameStateManager {
                 }
             }
 
+            console.log('Localizações processadas:', locations);
             return locations;
         } catch (error) {
             console.error('Erro ao obter localizações do Firebase:', error);

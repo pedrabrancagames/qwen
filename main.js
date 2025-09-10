@@ -13,6 +13,7 @@ import { RankingsManager } from './rankings.js';
 
 AFRAME.registerComponent('game-manager', {
     init: function () {
+        console.log('Inicializando game-manager...');
         // Inicializar módulos
         this.authManager = new AuthManager(this);
         this.gameState = new GameStateManager();
@@ -68,6 +69,7 @@ AFRAME.registerComponent('game-manager', {
         
         // Show Google login button
         this.uiManager.googleLoginButton.style.display = 'block';
+        console.log('game-manager inicializado com sucesso');
     },
 
     bindMethods: function () {
@@ -185,15 +187,18 @@ AFRAME.registerComponent('game-manager', {
     },
 
     initGame: function () {
+        console.log('Iniciando jogo...');
         this.gameInitialized = true;
         this.uiManager.locationScreen.classList.add('hidden');
         this.uiManager.gameUi.classList.remove('hidden');
         this.initMap();
         this.setupHitTest(this.el.sceneEl);
+        console.log('Jogo iniciado com sucesso');
     },
 
     initMap: function () {
         const selectedLocation = this.gameState.getSelectedLocation();
+        console.log('Localização selecionada:', selectedLocation);
         if (selectedLocation) {
             this.mapManager.initMap(
                 selectedLocation,
@@ -202,6 +207,8 @@ AFRAME.registerComponent('game-manager', {
             );
             this.generateGhost();
             this.startGps();
+        } else {
+            console.error('Nenhuma localização selecionada para inicializar o mapa');
         }
     },
 
