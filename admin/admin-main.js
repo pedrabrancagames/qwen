@@ -65,6 +65,77 @@ function showDashboard() {
 function loadDashboard() {
     const dashboardContent = document.getElementById('dashboard-content');
     dashboardContent.innerHTML = `
+        <div class="main-content">
+            <div id="navigation-container"></div>
+            <div id="page-content-container">
+                <div class="page-content" id="main-page-content">
+                    <h2>Bem-vindo ao Painel Administrativo</h2>
+                    <p>Selecione uma opção no menu acima para começar.</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Inicializar navegação
+    initNavigation();
+    
+    // Adicionar evento de logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        adminAuth.logout();
+    });
+}
+
+// Função para inicializar a navegação
+function initNavigation() {
+    const navContainer = document.getElementById('navigation-container');
+    if (!navContainer) return;
+    
+    // Importar componente de navegação
+    import('./components/navigation.js').then(({ initNavigation }) => {
+        initNavigation(navContainer, handleNavigation);
+        
+        // Ativar item de dashboard por padrão
+        import('./components/navigation.js').then(({ activateNavItem }) => {
+            activateNavItem(navContainer, 'dashboard');
+        });
+    }).catch(error => {
+        console.error('Erro ao carregar componente de navegação:', error);
+    });
+}
+
+// Função para lidar com a navegação
+function handleNavigation(pageId) {
+    const pageContent = document.getElementById('main-page-content');
+    if (!pageContent) return;
+    
+    switch (pageId) {
+        case 'dashboard':
+            loadDashboardPage(pageContent);
+            break;
+        case 'users':
+            loadUsersPage(pageContent);
+            break;
+        case 'stats':
+            loadStatsPage(pageContent);
+            break;
+        case 'config':
+            loadConfigPage(pageContent);
+            break;
+        case 'logs':
+            loadLogsPage(pageContent);
+            break;
+        default:
+            pageContent.innerHTML = `
+                <h2>Página não encontrada</h2>
+                <p>A página solicitada não foi encontrada.</p>
+            `;
+    }
+}
+
+// Função para carregar a página do dashboard
+function loadDashboardPage(container) {
+    container.innerHTML = `
+        <h2>Dashboard</h2>
         <div id="dashboard-container">
             <!-- O dashboard será carregado aqui -->
         </div>
@@ -75,11 +146,78 @@ function loadDashboard() {
     if (dashboardContainer) {
         dashboardManager = initDashboard(dashboardContainer, firebase.database());
     }
-    
-    // Adicionar evento de logout
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        adminAuth.logout();
-    });
+}
+
+// Função para carregar a página de usuários
+function loadUsersPage(container) {
+    container.innerHTML = `
+        <h2>Gerenciamento de Usuários</h2>
+        <p>Funcionalidade de gerenciamento de usuários em desenvolvimento.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Total de Usuários</h3>
+                <p>-</p>
+            </div>
+            <div class="card">
+                <h3>Usuários Ativos (24h)</h3>
+                <p>-</p>
+            </div>
+        </div>
+    `;
+}
+
+// Função para carregar a página de estatísticas
+function loadStatsPage(container) {
+    container.innerHTML = `
+        <h2>Estatísticas</h2>
+        <p>Funcionalidade de visualização de estatísticas em desenvolvimento.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Capturas por Hora</h3>
+                <p>Gráfico em desenvolvimento</p>
+            </div>
+            <div class="card">
+                <h3>Localizações Populares</h3>
+                <p>Gráfico em desenvolvimento</p>
+            </div>
+        </div>
+    `;
+}
+
+// Função para carregar a página de configurações
+function loadConfigPage(container) {
+    container.innerHTML = `
+        <h2>Configurações do Jogo</h2>
+        <p>Funcionalidade de configurações do jogo em desenvolvimento.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Configurações Gerais</h3>
+                <p>Formulário em desenvolvimento</p>
+            </div>
+            <div class="card">
+                <h3>Configurações de Localização</h3>
+                <p>Formulário em desenvolvimento</p>
+            </div>
+        </div>
+    `;
+}
+
+// Função para carregar a página de logs
+function loadLogsPage(container) {
+    container.innerHTML = `
+        <h2>Logs do Sistema</h2>
+        <p>Funcionalidade de visualização de logs em desenvolvimento.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Últimos Logs</h3>
+                <p>Tabela em desenvolvimento</p>
+            </div>
+            <div class="card">
+                <h3>Busca de Logs</h3>
+                <p>Filtro em desenvolvimento</p>
+            </div>
+        </div>
+    `;
 }
 
 // Função para limpar erros do formulário

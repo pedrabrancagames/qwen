@@ -39,11 +39,11 @@
   - Adicionar gráfico de distribuição de capturas por localização
   - _Requisitos: 3.2_
 
-- [ ] 3.3 Adicionar sistema de navegação principal
-  - Implementar menu lateral responsivo com seções principais
-  - Criar sistema de roteamento SPA para navegação entre seções
-  - Adicionar breadcrumbs e indicadores de seção ativa
-  - _Requisitos: 6.3_
+- [x] 3.3 Adicionar sistema de navegação principal
+  - Criar `admin/components/navigation.js` com menu de navegação lateral
+  - Implementar sistema de roteamento para diferentes seções administrativas
+  - Adicionar suporte a ícones e rótulos descritivos para cada seção
+  - _Requisitos: 3.3_
 
 - [ ] 4. Implementar gerenciamento de usuários
 - [ ] 4.1 Criar módulo de gerenciamento de usuários
