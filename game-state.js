@@ -59,6 +59,13 @@ export class GameStateManager {
             console.log(`Tentando definir localização: ${locationName}`);
             const locations = await this.getLocations();
             console.log('Localizações disponíveis:', locations);
+            
+            // Verificar se há localizações disponíveis
+            if (Object.keys(locations).length === 0) {
+                console.warn('Nenhuma localização disponível');
+                return false;
+            }
+            
             if (locations[locationName]) {
                 this.selectedLocation = locations[locationName];
                 console.log('Localização selecionada:', this.selectedLocation);
@@ -146,6 +153,8 @@ export class GameStateManager {
 
     // Obtém todas as localizações disponíveis do Firebase
     async getLocations() {
+        console.log('Obtendo localizações do Firebase...');
+        
         if (!this.firebaseDatabase) {
             console.warn('Firebase Database não configurado, usando localizações padrão');
             return {
@@ -156,44 +165,16 @@ export class GameStateManager {
         }
 
         try {
-            console.log('Obtendo localizações do Firebase...');
+            console.log('Criando referência do Firebase...');
             const locationsRef = ref(this.firebaseDatabase, 'locations');
             console.log('Referência do Firebase criada:', locationsRef);
+            
+            console.log('Obtendo dados do Firebase...');
             const snapshot = await get(locationsRef);
             console.log('Snapshot obtido:', snapshot);
+            
             let locationsData = snapshot.val() || {};
-
             console.log('Dados das localizações do Firebase:', locationsData);
-
-            // Se não houver localizações no Firebase, criar as padrão
-            if (Object.keys(locationsData).length === 0) {
-                console.log('Nenhuma localização encontrada no Firebase, criando localizações padrão');
-                const defaultLocations = {
-                    "location1": {
-                        name: "Praça Central",
-                        lat: -27.630913,
-                        lon: -48.679793,
-                        active: true
-                    },
-                    "location2": {
-                        name: "Parque da Cidade",
-                        lat: -27.639797,
-                        lon: -48.667749,
-                        active: true
-                    },
-                    "location3": {
-                        name: "Casa do Vô",
-                        lat: -27.51563471648395,
-                        lon: -48.64996016391755,
-                        active: true
-                    }
-                };
-                
-                // Salvar localizações padrão no Firebase
-                await set(locationsRef, defaultLocations);
-                locationsData = defaultLocations;
-                console.log('Localizações padrão salvas no Firebase:', locationsData);
-            }
 
             // Converter os dados do Firebase para o formato esperado pelo jogo
             const locations = {};
@@ -211,12 +192,8 @@ export class GameStateManager {
             return locations;
         } catch (error) {
             console.error('Erro ao obter localizações do Firebase:', error);
-            // Retornar localizações padrão em caso de erro
-            return {
-                "Praça Central": { lat: -27.630913, lon: -48.679793 },
-                "Parque da Cidade": { lat: -27.639797, lon: -48.667749 },
-                "Casa do Vô": { lat: -27.51563471648395, lon: -48.64996016391755 }
-            };
+            // Retornar objeto vazio em vez de localizações padrão quando há erro no Firebase
+            return {};
         }
     }
 }

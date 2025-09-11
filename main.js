@@ -73,6 +73,7 @@ AFRAME.registerComponent('game-manager', {
     },
 
     bindMethods: function () {
+        console.log('Vinculando métodos...');
         this.onAuthStateChanged = this.authManager.onAuthStateChanged.bind(this.authManager);
         this.updateInventoryUI = this.updateInventoryUI.bind(this);
         this.depositGhosts = this.depositGhosts.bind(this);
@@ -96,6 +97,7 @@ AFRAME.registerComponent('game-manager', {
         this.tick = this.tick.bind(this);
         this.handleEmailLogin = this.handleEmailLogin.bind(this);
         this.handleEmailSignup = this.handleEmailSignup.bind(this);
+        console.log('Métodos vinculados com sucesso');
     },
 
     initializeApp: function () {
@@ -192,13 +194,21 @@ AFRAME.registerComponent('game-manager', {
         this.uiManager.locationScreen.classList.add('hidden');
         this.uiManager.gameUi.classList.remove('hidden');
         this.initMap();
-        this.setupHitTest(this.el.sceneEl);
+        
+        // Verificar se a cena AR está disponível antes de configurar o hit test
+        if (this.el.sceneEl && this.el.sceneEl.renderer && this.el.sceneEl.renderer.xr) {
+            console.log('Configurando hit test para AR...');
+            this.setupHitTest(this.el.sceneEl);
+        } else {
+            console.error('Cena AR não disponível para configurar hit test');
+        }
+        
         console.log('Jogo iniciado com sucesso');
     },
 
     initMap: function () {
         const selectedLocation = this.gameState.getSelectedLocation();
-        console.log('Localização selecionada:', selectedLocation);
+        console.log('Localização selecionada para inicializar mapa:', selectedLocation);
         if (selectedLocation) {
             this.mapManager.initMap(
                 selectedLocation,

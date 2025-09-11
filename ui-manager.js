@@ -152,6 +152,16 @@ export class UIManager {
             // Limpar o container
             locationButtonsContainer.innerHTML = '';
             
+            // Verificar se há localizações disponíveis
+            if (Object.keys(locations).length === 0) {
+                console.warn('Nenhuma localização disponível para exibir');
+                const noLocationsMessage = document.createElement('p');
+                noLocationsMessage.className = 'no-locations-message';
+                noLocationsMessage.textContent = 'Nenhuma área de caça disponível no momento.';
+                locationButtonsContainer.appendChild(noLocationsMessage);
+                return;
+            }
+            
             // Criar botões para cada localização
             let buttonCount = 0;
             for (const [locationName, locationData] of Object.entries(locations)) {
@@ -169,7 +179,11 @@ export class UIManager {
             this.updateLocationButtonListeners(gameManager);
         }).catch((error) => {
             console.error('Erro ao carregar botões de localização:', error);
-            // Em caso de erro, manter os botões padrão do HTML
+            // Em caso de erro, mostrar mensagem de erro
+            const locationButtonsContainer = document.getElementById('location-buttons-container');
+            if (locationButtonsContainer) {
+                locationButtonsContainer.innerHTML = '<p class="error-message">Erro ao carregar áreas de caça. Tente novamente mais tarde.</p>';
+            }
         });
     }
 
@@ -290,9 +304,11 @@ export class UIManager {
                         this.setEnterButtonEnabled(true);
                     } else {
                         console.error(`Falha ao definir localização: ${locationName}`);
+                        this.showNotification(`Falha ao selecionar a localização: ${locationName}`);
                     }
                 }).catch((error) => {
                     console.error('Erro ao definir localização:', error);
+                    this.showNotification(`Erro ao selecionar a localização: ${error.message}`);
                 });
             });
         });
@@ -356,64 +372,105 @@ export class UIManager {
 
     // Atualiza a interface do inventário
     updateInventoryUI(inventory, inventoryLimit) {
+        if (!this.inventoryBadge || !this.ghostList) {
+            console.error('Elementos do inventário não encontrados');
+            return;
+        }
+        
         this.inventoryBadge.innerText = `${inventory.length}/${inventoryLimit}`;
         this.ghostList.innerHTML = '';
         
         if (inventory.length === 0) {
             this.ghostList.innerHTML = '<li>Inventário vazio.</li>';
-            this.depositButton.style.display = 'none';
+            if (this.depositButton) {
+                this.depositButton.style.display = 'none';
+            }
         } else {
             inventory.forEach(ghost => {
                 const li = document.createElement('li');
                 li.textContent = `${ghost.type} (Pontos: ${ghost.points}) - ID: ${ghost.id}`;
                 this.ghostList.appendChild(li);
             });
-            this.depositButton.style.display = 'block';
+            if (this.depositButton) {
+                this.depositButton.style.display = 'block';
+            }
         }
     }
 
     // Atualiza a barra de progresso do Proton Pack
     updateProtonPackProgress(progress) {
-        this.protonPackProgressFill.style.height = `${progress * 100}%`;
+        if (this.protonPackProgressFill) {
+            this.protonPackProgressFill.style.height = `${progress * 100}%`;
+        } else {
+            console.error('Elemento de progresso do Proton Pack não encontrado');
+        }
     }
 
     // Mostra a barra de progresso do Proton Pack
     showProtonPackProgress() {
-        this.protonPackProgressBar.style.display = 'block';
+        if (this.protonPackProgressBar) {
+            this.protonPackProgressBar.style.display = 'block';
+        } else {
+            console.error('Barra de progresso do Proton Pack não encontrada');
+        }
     }
 
     // Esconde a barra de progresso do Proton Pack
     hideProtonPackProgress() {
-        this.protonPackProgressBar.style.display = 'none';
-        this.protonPackProgressFill.style.height = '0%';
+        if (this.protonPackProgressBar) {
+            this.protonPackProgressBar.style.display = 'none';
+            if (this.protonPackProgressFill) {
+                this.protonPackProgressFill.style.height = '0%';
+            }
+        } else {
+            console.error('Barra de progresso do Proton Pack não encontrada');
+        }
     }
 
     // Mostra uma notificação
     showNotification(message) {
-        this.notificationMessage.textContent = message;
-        this.notificationModal.classList.remove('hidden');
+        if (this.notificationModal && this.notificationMessage) {
+            this.notificationMessage.textContent = message;
+            this.notificationModal.classList.remove('hidden');
+        } else {
+            console.error('Elementos de notificação não encontrados');
+            // Fallback para alert do navegador
+            alert(message);
+        }
     }
 
     // Esconde a notificação
     hideNotification() {
-        this.notificationModal.classList.add('hidden');
+        if (this.notificationModal) {
+            this.notificationModal.classList.add('hidden');
+        } else {
+            console.error('Elemento de notificação não encontrado');
+        }
     }
 
     // Atualiza as informações de distância
     updateDistanceInfo(text, color = "#92F428") {
-        this.distanceInfo.innerText = text;
-        this.distanceInfo.style.color = color;
-        
-        // Remover a classe near-ghost do minimapa se a cor não for vermelha
-        if (color !== "#ff0000") {
-            this.minimapElement.classList.remove('near-ghost');
+        if (this.distanceInfo) {
+            this.distanceInfo.innerText = text;
+            this.distanceInfo.style.color = color;
+            
+            // Remover a classe near-ghost do minimapa se a cor não for vermelha
+            if (this.minimapElement && color !== "#ff0000") {
+                this.minimapElement.classList.remove('near-ghost');
+            }
+        } else {
+            console.error('Elemento de informações de distância não encontrado');
         }
     }
 
     // Habilita/desabilita o botão de entrar
     setEnterButtonEnabled(enabled) {
-        this.enterButton.disabled = !enabled;
-        this.enterButton.style.display = enabled ? 'block' : 'none';
+        if (this.enterButton) {
+            this.enterButton.disabled = !enabled;
+            this.enterButton.style.display = enabled ? 'block' : 'none';
+        } else {
+            console.error('Botão de entrar não encontrado');
+        }
     }
 
     // Mostra/esconde telas com animações
@@ -424,25 +481,37 @@ export class UIManager {
         // Mostra a tela solicitada com animação
         switch(screenName) {
             case 'login':
-                this.loginScreen.classList.remove('hidden');
-                this.loginScreen.classList.add('slide-in');
+                if (this.loginScreen) {
+                    this.loginScreen.classList.remove('hidden');
+                    this.loginScreen.classList.add('slide-in');
+                }
                 break;
             case 'emailLogin':
-                this.emailLoginScreen.classList.remove('hidden');
-                this.emailLoginScreen.classList.add('slide-in');
+                if (this.emailLoginScreen) {
+                    this.emailLoginScreen.classList.remove('hidden');
+                    this.emailLoginScreen.classList.add('slide-in');
+                }
                 break;
             case 'location':
-                this.locationScreen.classList.remove('hidden');
-                this.locationScreen.classList.add('slide-in');
+                if (this.locationScreen) {
+                    this.locationScreen.classList.remove('hidden');
+                    this.locationScreen.classList.add('slide-in');
+                }
                 break;
             case 'game':
-                this.gameUi.classList.remove('hidden');
+                if (this.gameUi) {
+                    this.gameUi.classList.remove('hidden');
+                }
                 break;
             case 'inventory':
-                this.inventoryModal.classList.remove('hidden');
+                if (this.inventoryModal) {
+                    this.inventoryModal.classList.remove('hidden');
+                }
                 break;
             case 'qrScanner':
-                this.qrScannerScreen.classList.remove('hidden');
+                if (this.qrScannerScreen) {
+                    this.qrScannerScreen.classList.remove('hidden');
+                }
                 break;
         }
     }
@@ -462,8 +531,10 @@ export class UIManager {
             if (screen && !screen.classList.contains('hidden')) {
                 screen.classList.add('fade-out');
                 setTimeout(() => {
-                    screen.classList.add('hidden');
-                    screen.classList.remove('fade-out');
+                    if (screen) {
+                        screen.classList.add('hidden');
+                        screen.classList.remove('fade-out');
+                    }
                 }, 500);
             }
         });
@@ -471,6 +542,11 @@ export class UIManager {
 
     // Adiciona efeito de loading ao botão
     setButtonLoading(button, isLoading) {
+        if (!button) {
+            console.error('Botão não encontrado para aplicar efeito de loading');
+            return;
+        }
+        
         if (isLoading) {
             button.classList.add('loading');
             button.disabled = true;
@@ -500,22 +576,35 @@ export class UIManager {
     // Marca um botão de localização como selecionado
     selectLocationButton(button) {
         // Remove a classe 'selected' de todos os botões
-        document.querySelectorAll('.location-button').forEach(btn => {
-            btn.classList.remove('selected');
+        const locationButtons = document.querySelectorAll('.location-button');
+        locationButtons.forEach(btn => {
+            if (btn) {
+                btn.classList.remove('selected');
+            }
         });
         
         // Adiciona a classe 'selected' ao botão clicado
-        button.classList.add('selected');
+        if (button) {
+            button.classList.add('selected');
+        }
     }
 
     // Atualiza a mensagem de erro de autenticação
     updateAuthErrorMessage(message) {
-        this.authErrorMessage.textContent = message;
+        if (this.authErrorMessage) {
+            this.authErrorMessage.textContent = message;
+        } else {
+            console.error('Elemento de mensagem de erro de autenticação não encontrado');
+        }
     }
 
     // Limpa os campos de entrada de email e senha
     clearAuthInputs() {
-        this.emailInput.value = '';
-        this.passwordInput.value = '';
+        if (this.emailInput) {
+            this.emailInput.value = '';
+        }
+        if (this.passwordInput) {
+            this.passwordInput.value = '';
+        }
     }
 }

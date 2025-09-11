@@ -1210,3 +1210,20 @@ body {
     font-size: 0.9em;
     color: #aaa;
 }
+
+/* Mensagens de erro e ausência de localizações */
+.no-locations-message,
+.error-message {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    margin: 10px;
+}
+
+.error-message {
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+}

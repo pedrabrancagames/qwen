@@ -36,9 +36,31 @@ export class ARManager {
 
     // Configura o hit test para AR
     async setupHitTest(sceneEl) {
-        const session = sceneEl.renderer.xr.getSession();
-        this.referenceSpace = await session.requestReferenceSpace('viewer');
-        this.hitTestSource = await session.requestHitTestSource({ space: this.referenceSpace });
+        try {
+            console.log('Configurando hit test para AR...');
+            
+            // Verificar se a cena AR está disponível
+            if (!sceneEl || !sceneEl.renderer || !sceneEl.renderer.xr) {
+                console.error('Cena AR não disponível para configurar hit test');
+                return;
+            }
+            
+            const session = sceneEl.renderer.xr.getSession();
+            
+            // Verificar se a sessão existe
+            if (!session) {
+                console.error('Sessão AR não disponível');
+                return;
+            }
+            
+            console.log('Sessão AR disponível:', session);
+            this.referenceSpace = await session.requestReferenceSpace('viewer');
+            console.log('Reference space criado:', this.referenceSpace);
+            this.hitTestSource = await session.requestHitTestSource({ space: this.referenceSpace });
+            console.log('Hit test source criado:', this.hitTestSource);
+        } catch (error) {
+            console.error('Erro ao configurar hit test para AR:', error);
+        }
     }
 
     // Processa o tick para atualização de elementos AR

@@ -13,7 +13,7 @@
       ".write": "auth != null && root.child('admins').child(auth.uid).exists()"
     },
     "locations": {
-      ".read": "auth != null && root.child('admins').child(auth.uid).exists()",
+      ".read": "auth != null",
       ".write": "auth != null && root.child('admins').child(auth.uid).exists()",
       "$locationId": {
         ".read": true
