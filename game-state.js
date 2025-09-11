@@ -156,12 +156,8 @@ export class GameStateManager {
         console.log('Obtendo localizações do Firebase...');
         
         if (!this.firebaseDatabase) {
-            console.warn('Firebase Database não configurado, usando localizações padrão');
-            return {
-                "Praça Central": { lat: -27.630913, lon: -48.679793 },
-                "Parque da Cidade": { lat: -27.639797, lon: -48.667749 },
-                "Casa do Vô": { lat: -27.51563471648395, lon: -48.64996016391755 }
-            };
+            console.warn('Firebase Database não configurado');
+            return {};
         }
 
         try {
@@ -192,7 +188,6 @@ export class GameStateManager {
             return locations;
         } catch (error) {
             console.error('Erro ao obter localizações do Firebase:', error);
-            // Retornar objeto vazio em vez de localizações padrão quando há erro no Firebase
             return {};
         }
     }
