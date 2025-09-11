@@ -286,9 +286,31 @@ export class UIManager {
             gameManager.startQrScanner();
         });
 
-        this.protonPackIcon.addEventListener('click', () => {
+        // Eventos para o botão do Proton Pack (pressionar e segurar)
+        this.protonPackIcon.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevenir comportamento padrão (arrastar/salvar imagem)
             this.triggerHapticFeedback();
             gameManager.startCapture();
+        });
+
+        this.protonPackIcon.addEventListener('mouseup', () => {
+            gameManager.cancelCapture();
+        });
+
+        this.protonPackIcon.addEventListener('mouseleave', () => {
+            // Também cancelar se o dedo/mouse sair do botão
+            gameManager.cancelCapture();
+        });
+
+        // Suporte para toque em dispositivos móveis
+        this.protonPackIcon.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.triggerHapticFeedback();
+            gameManager.startCapture();
+        });
+
+        this.protonPackIcon.addEventListener('touchend', () => {
+            gameManager.cancelCapture();
         });
 
         this.gameLogo.addEventListener('click', () => {
