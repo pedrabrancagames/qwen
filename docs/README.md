@@ -38,6 +38,11 @@
    - Deployment
    - Segurança e monitoramento
 
+7. [Solução de Problemas](SOLUTION_RANKING_ISSUE.md)
+   - Problema com rankings
+   - Soluções implementadas
+   - Como usar
+
 ## Sobre o Projeto
 
 Ghost Squad é um jogo inovador de realidade aumentada baseado no universo Ghostbusters, onde os jogadores se tornam caçadores de fantasmas utilizando tecnologia WebXR, GPS e QR Codes.

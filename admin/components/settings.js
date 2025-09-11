@@ -108,6 +108,14 @@ function renderSettings(element, gameConfig) {
                         </div>
                     </div>
                     
+                    <div class="settings-section">
+                        <h3>Manutenção</h3>
+                        <div class="form-group">
+                            <button type="button" id="update-rankings" class="btn-secondary">Atualizar Rankings</button>
+                            <p class="help-text">Atualiza os rankings com base nos dados atuais dos usuários</p>
+                        </div>
+                    </div>
+                    
                     <div class="settings-actions">
                         <button type="submit" class="btn-primary">Salvar Configurações</button>
                         <button type="button" id="reset-config" class="btn-secondary">Redefinir para Padrão</button>
@@ -122,6 +130,7 @@ function renderSettings(element, gameConfig) {
                         <li>As alterações nas configurações entram em vigor imediatamente para todos os jogadores.</li>
                         <li>Tenha cuidado ao ajustar os parâmetros do jogo para manter o equilíbrio.</li>
                         <li>É recomendável testar as configurações em um ambiente de desenvolvimento antes de aplicar em produção.</li>
+                        <li>Utilize a função "Atualizar Rankings" regularmente para manter os rankings sincronizados.</li>
                     </ul>
                 </div>
             </div>
@@ -286,6 +295,41 @@ function setupEventListeners(element, configManager, adminAuth) {
             });
             
             fileInput.click();
+        });
+    }
+    
+    // Atualizar rankings
+    const updateRankingsButton = element.querySelector('#update-rankings');
+    if (updateRankingsButton) {
+        updateRankingsButton.addEventListener('click', async () => {
+            try {
+                // Mostrar indicador de carregamento
+                updateRankingsButton.disabled = true;
+                updateRankingsButton.textContent = 'Atualizando...';
+                
+                // Atualizar rankings
+                await configManager.updateRankings();
+                
+                // Registrar ação no log de auditoria
+                const currentAdmin = adminAuth.getCurrentAdmin();
+                if (currentAdmin) {
+                    await adminAuth.logAdminAction(
+                        currentAdmin.uid, 
+                        'update_rankings', 
+                        {}
+                    );
+                }
+                
+                // Mostrar mensagem de sucesso
+                showNotification('Rankings atualizados com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao atualizar rankings:', error);
+                showNotification('Erro ao atualizar rankings: ' + error.message, 'error');
+            } finally {
+                // Restaurar botão
+                updateRankingsButton.disabled = false;
+                updateRankingsButton.textContent = 'Atualizar Rankings';
+            }
         });
     }
 }

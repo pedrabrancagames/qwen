@@ -358,4 +358,51 @@ export class ConfigManager {
             throw error;
         }
     }
+    
+    /**
+     * Atualiza os rankings com base nos dados dos usuários
+     * @returns {Promise<void>}
+     */
+    async updateRankings() {
+        try {
+            // Obter referência para o caminho rankings
+            const rankingsRef = this.database.ref('rankings');
+            
+            // Obter todos os usuários
+            const usersRef = this.database.ref('users');
+            const usersSnapshot = await usersRef.once('value');
+            const users = usersSnapshot.val() || {};
+            
+            // Converter para array e filtrar usuários com pontos > 0
+            const players = Object.entries(users)
+                .map(([uid, userData]) => ({
+                    uid,
+                    displayName: userData.displayName || 'Caça-Fantasma',
+                    points: userData.points || 0,
+                    captures: userData.captures || 0
+                }))
+                .filter(player => player.points > 0); // Apenas usuários com pontos
+            
+            // Ordenar por pontos (descendente)
+            players.sort((a, b) => b.points - a.points);
+            
+            // Criar objeto para rankings
+            const rankingsData = {};
+            players.forEach(player => {
+                rankingsData[player.uid] = {
+                    displayName: player.displayName,
+                    points: player.points,
+                    captures: player.captures
+                };
+            });
+            
+            // Atualizar rankings no Firebase
+            await rankingsRef.set(rankingsData);
+            
+            console.log(`Rankings atualizados com sucesso para ${players.length} jogadores`);
+        } catch (error) {
+            console.error('Erro ao atualizar rankings:', error);
+            throw error;
+        }
+    }
 }

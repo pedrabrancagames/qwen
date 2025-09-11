@@ -81,38 +81,95 @@ export class RankingsManager {
             
             console.log("Tentando carregar rankings para usuário:", this.gameManager.currentUser);
             
-            // Consultar os 10 melhores jogadores ordenados por pontos
-            const rankingsRef = ref(this.gameManager.database, 'rankings');
-            const rankingsQuery = query(rankingsRef, orderByChild('points'), limitToFirst(10));
-            const snapshot = await get(rankingsQuery);
-            
-            if (snapshot.exists()) {
-                // Converter os dados para um array
-                const users = [];
-                snapshot.forEach((childSnapshot) => {
-                    const userData = childSnapshot.val();
-                    users.push({
-                        key: childSnapshot.key,
-                        displayName: userData.displayName || 'Caça-Fantasma',
-                        points: userData.points || 0,
-                        captures: userData.captures || 0
+            // Primeiro, tentar carregar do caminho 'rankings' (estrutura recomendada)
+            try {
+                const rankingsRef = ref(this.gameManager.database, 'rankings');
+                const rankingsQuery = query(rankingsRef, orderByChild('points'), limitToFirst(10));
+                const snapshot = await get(rankingsQuery);
+                
+                if (snapshot.exists()) {
+                    // Converter os dados para um array
+                    const users = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const userData = childSnapshot.val();
+                        users.push({
+                            key: childSnapshot.key,
+                            displayName: userData.displayName || 'Caça-Fantasma',
+                            points: userData.points || 0,
+                            captures: userData.captures || 0
+                        });
                     });
-                });
-                
-                // Inverter a ordem para decrescente
-                users.reverse();
-                
-                // Exibir os rankings
-                this.displayRankings(users);
-            } else {
-                this.rankingsList.innerHTML = '<li>Nenhum jogador encontrado.</li>';
+                    
+                    // Inverter a ordem para decrescente
+                    users.reverse();
+                    
+                    // Exibir os rankings
+                    this.displayRankings(users);
+                    return;
+                }
+            } catch (error) {
+                // Se falhar ao ler de 'rankings', registrar o erro e continuar
+                console.warn("Não foi possível ler rankings do caminho 'rankings':", error);
             }
+            
+            // Se não houver dados em 'rankings', tentar ler diretamente de 'users'
+            // Isso só funcionará se as regras do Firebase permitirem
+            try {
+                const usersRef = ref(this.gameManager.database, 'users');
+                const usersQuery = query(usersRef, orderByChild('points'), limitToFirst(10));
+                const snapshot = await get(usersQuery);
+                
+                if (snapshot.exists()) {
+                    // Converter os dados para um array
+                    const users = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const userData = childSnapshot.val();
+                        // Apenas incluir usuários com pontos > 0 para evitar mostrar usuários que nunca jogaram
+                        if (userData.points > 0) {
+                            users.push({
+                                key: childSnapshot.key,
+                                displayName: userData.displayName || 'Caça-Fantasma',
+                                points: userData.points || 0,
+                                captures: userData.captures || 0
+                            });
+                        }
+                    });
+                    
+                    // Ordenar por pontos em ordem decrescente (o Firebase ordena em ordem crescente)
+                    users.sort((a, b) => b.points - a.points);
+                    
+                    // Exibir os rankings
+                    this.displayRankings(users);
+                    return;
+                }
+            } catch (error) {
+                // Se falhar ao ler de 'users', registrar o erro
+                console.warn("Não foi possível ler rankings do caminho 'users':", error);
+                if (error.message && error.message.includes("Permission denied")) {
+                    this.rankingsList.innerHTML = `
+                        <li>Erro de permissão ao acessar rankings.</li>
+                        <li>Para resolver este problema, um administrador precisa:</li>
+                        <li>1. Atualizar as regras do Firebase para permitir leitura de rankings</li>
+                        <li>2. Ou criar um caminho 'rankings' com dados agregados</li>
+                    `;
+                    return;
+                }
+            }
+            
+            // Se nenhum dos caminhos funcionar
+            this.rankingsList.innerHTML = '<li>Nenhum jogador encontrado.</li>';
         } catch (error) {
             console.error("Erro ao carregar rankings:", error);
             if (error.message && error.message.includes("Permission denied")) {
-                this.rankingsList.innerHTML = '<li>Erro: Permissão negada. Não foi possível acessar os rankings.</li>';
+                this.rankingsList.innerHTML = `
+                    <li>Erro: Permissão negada. Não foi possível acessar os rankings.</li>
+                    <li>Para resolver este problema, um administrador precisa atualizar as regras do Firebase.</li>
+                `;
             } else if (error.message && error.message.includes("Index not defined")) {
-                this.rankingsList.innerHTML = '<li>Erro: Índice não definido. O sistema de rankings precisa de configurações adicionais.</li>';
+                this.rankingsList.innerHTML = `
+                    <li>Erro: Índice não definido. O sistema de rankings precisa de configurações adicionais.</li>
+                    <li>Um administrador precisa adicionar ".indexOn": "points" às regras do Firebase.</li>
+                `;
             } else {
                 this.rankingsList.innerHTML = '<li>Erro ao carregar rankings.</li>';
             }
