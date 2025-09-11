@@ -188,21 +188,45 @@ AFRAME.registerComponent('game-manager', {
         this.uiManager.gameUi.classList.add('hidden');
     },
 
-    initGame: function () {
+    initGame: async function () {
         console.log('Iniciando jogo...');
         this.gameInitialized = true;
         this.uiManager.locationScreen.classList.add('hidden');
         this.uiManager.gameUi.classList.remove('hidden');
         this.initMap();
-        
-        // Verificar se a cena AR está disponível antes de configurar o hit test
-        if (this.el.sceneEl && this.el.sceneEl.renderer && this.el.sceneEl.renderer.xr) {
-            console.log('Configurando hit test para AR...');
-            this.setupHitTest(this.el.sceneEl);
-        } else {
-            console.error('Cena AR não disponível para configurar hit test');
+
+        const sceneEl = this.el.sceneEl;
+
+        // Adicionar um listener para quando a cena entrar no modo AR
+        sceneEl.addEventListener('enter-vr', () => {
+            console.log("Entrou no modo AR. Configurando hit test.");
+            if (sceneEl.is('ar-mode')) {
+                this.setupHitTest(sceneEl);
+            }
+        });
+
+        // Tentar entrar no modo AR
+        try {
+            console.log("Tentando entrar no modo AR...");
+            await sceneEl.enterVR(true);
+        } catch (e) {
+            console.error("Não foi possível iniciar a sessão AR.", e);
+            // Adicionar um botão de fallback caso o `enterVR` automático falhe
+            this.uiManager.showNotification("Clique para iniciar a sessão AR");
+            const fallbackButton = document.createElement('button');
+            fallbackButton.innerText = 'Iniciar AR';
+            fallbackButton.style.position = 'absolute';
+            fallbackButton.style.zIndex = '10000';
+            fallbackButton.style.top = '50%';
+            fallbackButton.style.left = '50%';
+            fallbackButton.style.transform = 'translate(-50%, -50%)';
+            fallbackButton.onclick = () => {
+                sceneEl.enterVR(true);
+                fallbackButton.remove();
+            };
+            document.body.appendChild(fallbackButton);
         }
-        
+
         console.log('Jogo iniciado com sucesso');
     },
 
