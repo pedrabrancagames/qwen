@@ -82,9 +82,9 @@ export class RankingsManager {
             console.log("Tentando carregar rankings para usuário:", this.gameManager.currentUser);
             
             // Consultar os 10 melhores jogadores ordenados por pontos
-            const usersRef = ref(this.gameManager.database, 'users');
-            // Remover a ordenação por pontos temporariamente para testar
-            const snapshot = await get(usersRef);
+            const rankingsRef = ref(this.gameManager.database, 'rankings');
+            const rankingsQuery = query(rankingsRef, orderByChild('points'), limitToFirst(10));
+            const snapshot = await get(rankingsQuery);
             
             if (snapshot.exists()) {
                 // Converter os dados para um array
@@ -99,14 +99,11 @@ export class RankingsManager {
                     });
                 });
                 
-                // Ordenar por pontos (decrescente) localmente
-                users.sort((a, b) => b.points - a.points);
-                
-                // Pegar apenas os 10 primeiros
-                const topUsers = users.slice(0, 10);
+                // Inverter a ordem para decrescente
+                users.reverse();
                 
                 // Exibir os rankings
-                this.displayRankings(topUsers);
+                this.displayRankings(users);
             } else {
                 this.rankingsList.innerHTML = '<li>Nenhum jogador encontrado.</li>';
             }
