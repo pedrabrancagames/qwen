@@ -266,6 +266,36 @@ export class UIManager {
                 this.setButtonLoading(this.enterButton, false);
             }
         });
+
+        // Event listeners para a interface do jogo (AR)
+        this.inventoryIconContainer.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.inventoryModal.classList.remove('hidden');
+        });
+
+        this.closeInventoryButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.inventoryModal.classList.add('hidden');
+        });
+
+        this.depositButton.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            gameManager.startQrScanner();
+        });
+
+        this.protonPackIcon.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            gameManager.startCapture();
+        });
+
+        this.gameLogo.addEventListener('click', () => {
+            this.triggerHapticFeedback();
+            this.playButtonSound();
+            this.toggleARMenu(gameManager);
+        });
         
         console.log('Event listeners adicionados com sucesso');
     }
