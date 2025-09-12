@@ -147,6 +147,10 @@ body {
 }
 
 /* Tela de Login */
+#login-screen {
+    background: transparent;
+}
+
 #auth-buttons-container {
     display: flex;
     flex-direction: column;
