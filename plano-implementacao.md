@@ -7,9 +7,9 @@ Este plano descreve a implementação das melhorias compatíveis de `Melhorias.m
 ### 1. Aprimoramentos Visuais/UI
 
 #### Tarefa 1.1: Animações de Partículas para Tela de Login
-- [ ] Adicionar efeitos de partículas de ectoplasma ao fundo da tela de login
-- [ ] Implementar usando o sistema existente `login-background.js`
-- [ ] Garantir otimização de performance para dispositivos móveis
+- [x] Adicionar efeitos de partículas de ectoplasma ao fundo da tela de login
+- [x] Implementar usando o sistema existente `login-background.js`
+- [x] Garantir otimização de performance para dispositivos móveis
 
 #### Tarefa 1.2: Animação de Carregamento Personalizada do Proton Pack
 - [ ] Substituir a barra de progresso atual por visualização animada do proton pack
