@@ -13,7 +13,7 @@ class LoginBackgroundEffect {
         
         // Configurações para um visual de ectoplasma
         this.config = {
-            particleCount: 75, // Aumentado para um efeito mais denso
+            particleCount: 75,
             particleSize: { min: 2, max: 6 },
             particleSpeed: { min: 0.3, max: 1.0 },
             particleOpacity: { min: 0.2, max: 0.7 },
@@ -68,12 +68,11 @@ class LoginBackgroundEffect {
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: 1; /* Colocado em uma camada intermediária */
             pointer-events: none;
-            background-color: #080808; // Fundo escuro para destacar o efeito
         `;
         
-        document.body.insertBefore(this.canvas, document.body.firstChild);
+        document.body.appendChild(this.canvas);
         this.ctx = this.canvas.getContext('2d');
     }
     
@@ -111,13 +110,12 @@ class LoginBackgroundEffect {
             vy: (Math.random() - 0.5) * (this.config.particleSpeed.max - this.config.particleSpeed.min),
             size: size,
             opacity: Math.random() * (this.config.particleOpacity.max - this.config.particleOpacity.min) + this.config.particleOpacity.min,
-            // Para a forma orgânica
             shapePoints: Array.from({ length: 5 }, () => ({
                 x: (Math.random() - 0.5) * size * 1.5,
                 y: (Math.random() - 0.5) * size * 1.5,
             })),
             life: 1,
-            decay: Math.random() * 0.005 + 0.001, // Taxa de envelhecimento
+            decay: Math.random() * 0.005 + 0.001,
         };
     }
     
@@ -138,7 +136,6 @@ class LoginBackgroundEffect {
     animate() {
         if (!this.isRunning) return;
         
-        // Efeito de rastro (motion blur)
         this.ctx.fillStyle = `rgba(8, 8, 8, ${1 - this.config.trailLength})`;
         this.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
         
@@ -151,14 +148,13 @@ class LoginBackgroundEffect {
     updateParticles() {
         this.particles.forEach((p, index) => {
             p.vx += (Math.random() - 0.5) * 0.1;
-            p.vy += this.config.gravity; // Aplicar gravidade
+            p.vy += this.config.gravity;
             
             p.x += p.vx;
             p.y += p.vy;
 
             p.life -= p.decay;
             
-            // Reciclar partículas que saem da tela ou morrem
             if (p.y > window.innerHeight + 20 || p.life <= 0) {
                 this.particles[index] = this.createParticle(Math.random() * window.innerWidth, -20);
             }
@@ -172,11 +168,9 @@ class LoginBackgroundEffect {
             const coreColor = `rgba(${this.config.particleColor}, ${p.opacity * p.life})`;
             const glowColor = `rgba(${this.config.particleColor}, ${p.opacity * p.life * 0.3})`;
 
-            // Brilho externo
             this.ctx.shadowColor = glowColor;
             this.ctx.shadowBlur = p.size * 3;
 
-            // Desenhar forma orgânica
             this.ctx.fillStyle = coreColor;
             this.ctx.moveTo(p.x + p.shapePoints[0].x, p.y + p.shapePoints[0].y);
             for (let i = 1; i < p.shapePoints.length; i++) {
@@ -188,7 +182,6 @@ class LoginBackgroundEffect {
             this.ctx.closePath();
             this.ctx.fill();
         });
-        // Resetar sombra para não afetar outros elementos
         this.ctx.shadowBlur = 0;
     }
     

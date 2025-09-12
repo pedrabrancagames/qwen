@@ -43,6 +43,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     pointer-events: auto; /* Telas cheias devem ser clicáveis */
+    z-index: 2; /* Garante que a UI fique sobre o canvas de fundo */
 }
 
 @keyframes gradientShift {
