@@ -453,6 +453,15 @@ export class UIManager {
     updateProtonPackProgress(progress) {
         if (this.protonPackProgressFill) {
             this.protonPackProgressFill.style.height = `${progress * 100}%`;
+            
+            // Adicionar efeito visual baseado no progresso
+            if (progress >= 0.7) {
+                // Quando o progresso está alto, adiciona um efeito de pulso
+                this.protonPackIcon.classList.add('proton-pack-pulse');
+            } else if (this.protonPackIcon.classList.contains('proton-pack-pulse')) {
+                // Remove o efeito quando o progresso diminui
+                this.protonPackIcon.classList.remove('proton-pack-pulse');
+            }
         } else {
             console.error('Elemento de progresso do Proton Pack não encontrado');
         }
@@ -462,6 +471,8 @@ export class UIManager {
     showProtonPackProgress() {
         if (this.protonPackProgressBar) {
             this.protonPackProgressBar.style.display = 'block';
+            // Adiciona animação ao ícone do Proton Pack
+            this.protonPackIcon.classList.add('proton-pack-charging');
         } else {
             console.error('Barra de progresso do Proton Pack não encontrada');
         }
@@ -474,6 +485,8 @@ export class UIManager {
             if (this.protonPackProgressFill) {
                 this.protonPackProgressFill.style.height = '0%';
             }
+            // Remove animações do Proton Pack
+            this.protonPackIcon.classList.remove('proton-pack-charging', 'proton-pack-pulse');
         } else {
             console.error('Barra de progresso do Proton Pack não encontrada');
         }

@@ -133,6 +133,18 @@ class AnimationManager {
                 100% { background: linear-gradient(90deg, #92F428, #4CAF50); }
             }
             
+            /* Animação do Proton Pack */
+            @keyframes proton-pack-pulse {
+                0% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 5px rgba(146, 244, 40, 0.5)); }
+                50% { transform: scale(1.05); filter: brightness(1.2) drop-shadow(0 0 15px rgba(146, 244, 40, 0.8)); }
+                100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 5px rgba(146, 244, 40, 0.5)); }
+            }
+            
+            @keyframes proton-pack-energy {
+                0% { background-position: 0% 50%; }
+                100% { background-position: 100% 50%; }
+            }
+            
             /* Animações de Erro */
             @keyframes error-flash {
                 0% { background: rgba(244, 67, 54, 0); }
