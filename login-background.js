@@ -1,6 +1,6 @@
 /**
- * Efeito de Partículas de Fundo para a Tela de Login - Ghost Squad
- * Cria um efeito visual sutíl de partículas flutuantes na tela de login
+ * Efeito de Partículas de Ectoplasma para a Tela de Login - Ghost Squad
+ * Cria um efeito visual de partículas de ectoplasma flutuantes e gosmentas.
  */
 
 class LoginBackgroundEffect {
@@ -11,26 +11,25 @@ class LoginBackgroundEffect {
         this.animationId = null;
         this.isRunning = false;
         
-        // Configurações
+        // Configurações para um visual de ectoplasma
         this.config = {
-            particleCount: 50,
-            particleSize: { min: 1, max: 3 },
-            particleSpeed: { min: 0.2, max: 0.8 },
-            particleOpacity: { min: 0.1, max: 0.5 },
-            particleColor: '146, 244, 40' // Cor verde ghostbusters
+            particleCount: 75, // Aumentado para um efeito mais denso
+            particleSize: { min: 2, max: 6 },
+            particleSpeed: { min: 0.3, max: 1.0 },
+            particleOpacity: { min: 0.2, max: 0.7 },
+            particleColor: '120, 255, 100', // Verde ectoplasma mais vibrante
+            trailLength: 0.92, // Quão rápido o rastro desaparece (0 a 1)
+            gravity: 0.02, // Leve puxão para baixo
         };
         
-        // Aguardar carregamento da página antes de inicializar
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
         } else {
-            // Se já carregou, aguardar um pouco para garantir que body existe
             setTimeout(() => this.init(), 100);
         }
     }
     
     init() {
-        // Verificação robusta do ambiente
         if (!document.body) {
             console.warn('⚠️ document.body não disponível, tentando novamente em 200ms...');
             setTimeout(() => this.init(), 200);
@@ -43,31 +42,24 @@ class LoginBackgroundEffect {
             this.initParticles();
             this.start();
             
-            // Adicionar listener para redimensionamento
             window.addEventListener('resize', () => {
                 this.setupCanvas();
-                this.initParticles(); // Recriar partículas ao redimensionar
+                this.initParticles();
             });
             
-            console.log('🎨 Efeito de Partículas de Fundo inicializado com sucesso');
+            console.log('🎨 Efeito de Ectoplasma de Fundo inicializado com sucesso');
         } catch (error) {
-            console.error('❌ Erro ao inicializar Efeito de Partículas de Fundo:', error);
-            // Tentar novamente em 500ms
+            console.error('❌ Erro ao inicializar Efeito de Ectoplasma:', error);
             setTimeout(() => this.init(), 500);
         }
     }
     
     createCanvas() {
-        console.log('🖼️ Criando canvas para partículas de fundo...');
-        
-        // Remove canvas existente se houver
         const existingCanvas = document.getElementById('login-background');
         if (existingCanvas) {
-            console.log('🖼️ Removendo canvas existente');
             existingCanvas.remove();
         }
         
-        // Cria novo canvas
         this.canvas = document.createElement('canvas');
         this.canvas.id = 'login-background';
         this.canvas.style.cssText = `
@@ -78,36 +70,25 @@ class LoginBackgroundEffect {
             height: 100%;
             z-index: -1;
             pointer-events: none;
+            background-color: #080808; // Fundo escuro para destacar o efeito
         `;
         
-        // Adicionar ao body
-        document.body.appendChild(this.canvas);
+        document.body.insertBefore(this.canvas, document.body.firstChild);
         this.ctx = this.canvas.getContext('2d');
-        
-        console.log('🖼️ Canvas de partículas criado com sucesso');
     }
     
     setupCanvas() {
-        const updateSize = () => {
-            const dpr = window.devicePixelRatio || 1;
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            
-            // Definir tamanho real do canvas
-            this.canvas.width = width * dpr;
-            this.canvas.height = height * dpr;
-            
-            // Definir tamanho CSS
-            this.canvas.style.width = width + 'px';
-            this.canvas.style.height = height + 'px';
-            
-            // Ajustar escala do contexto
-            this.ctx.scale(dpr, dpr);
-            
-            console.log(`🖼️ Canvas de partículas redimensionado: ${width}x${height} (DPR: ${dpr})`);
-        };
+        const dpr = window.devicePixelRatio || 1;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
         
-        updateSize();
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+        
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
+        
+        this.ctx.scale(dpr, dpr);
     }
     
     initParticles() {
@@ -115,19 +96,29 @@ class LoginBackgroundEffect {
         const count = this.config.particleCount;
         
         for (let i = 0; i < count; i++) {
-            this.particles.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * (this.config.particleSpeed.max - this.config.particleSpeed.min) + this.config.particleSpeed.min,
-                vy: (Math.random() - 0.5) * (this.config.particleSpeed.max - this.config.particleSpeed.min) + this.config.particleSpeed.min,
-                size: Math.random() * (this.config.particleSize.max - this.config.particleSize.min) + this.config.particleSize.min,
-                opacity: Math.random() * (this.config.particleOpacity.max - this.config.particleOpacity.min) + this.config.particleOpacity.min,
-                // Variação na cor para efeito mais interessante
-                colorVariation: Math.random() * 50 - 25 // -25 a 25 variação
-            });
+            this.particles.push(this.createParticle());
         }
         
-        console.log(`✨ ${count} partículas inicializadas`);
+        console.log(`✨ ${count} partículas de ectoplasma inicializadas`);
+    }
+
+    createParticle(x, y) {
+        const size = Math.random() * (this.config.particleSize.max - this.config.particleSize.min) + this.config.particleSize.min;
+        return {
+            x: x || Math.random() * window.innerWidth,
+            y: y || Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * (this.config.particleSpeed.max - this.config.particleSpeed.min) + this.config.particleSpeed.min,
+            vy: (Math.random() - 0.5) * (this.config.particleSpeed.max - this.config.particleSpeed.min),
+            size: size,
+            opacity: Math.random() * (this.config.particleOpacity.max - this.config.particleOpacity.min) + this.config.particleOpacity.min,
+            // Para a forma orgânica
+            shapePoints: Array.from({ length: 5 }, () => ({
+                x: (Math.random() - 0.5) * size * 1.5,
+                y: (Math.random() - 0.5) * size * 1.5,
+            })),
+            life: 1,
+            decay: Math.random() * 0.005 + 0.001, // Taxa de envelhecimento
+        };
     }
     
     start() {
@@ -147,18 +138,10 @@ class LoginBackgroundEffect {
     animate() {
         if (!this.isRunning) return;
         
-        // Verificar se o canvas ainda existe
-        if (!this.canvas || !this.canvas.parentElement) {
-            console.warn('⚠️ Canvas de partículas perdido, recriando...');
-            this.createCanvas();
-            this.setupCanvas();
-            this.initParticles();
-        }
+        // Efeito de rastro (motion blur)
+        this.ctx.fillStyle = `rgba(8, 8, 8, ${1 - this.config.trailLength})`;
+        this.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
         
-        // Limpar canvas
-        this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        
-        // Atualizar e renderizar partículas
         this.updateParticles();
         this.renderParticles();
         
@@ -166,63 +149,60 @@ class LoginBackgroundEffect {
     }
     
     updateParticles() {
-        this.particles.forEach(p => {
-            // Atualizar posição
+        this.particles.forEach((p, index) => {
+            p.vx += (Math.random() - 0.5) * 0.1;
+            p.vy += this.config.gravity; // Aplicar gravidade
+            
             p.x += p.vx;
             p.y += p.vy;
+
+            p.life -= p.decay;
             
-            // Efeito de flutuação suave
-            p.x += Math.sin(Date.now() * 0.001 + p.y * 0.01) * 0.2;
-            p.y += Math.cos(Date.now() * 0.001 + p.x * 0.01) * 0.2;
-            
-            // Wrap around edges com suavidade
-            if (p.x > window.innerWidth + 20) p.x = -20;
-            if (p.x < -20) p.x = window.innerWidth + 20;
-            if (p.y > window.innerHeight + 20) p.y = -20;
-            if (p.y < -20) p.y = window.innerHeight + 20;
-            
-            // Variação suave na opacidade
-            p.opacity += (Math.random() - 0.5) * 0.01;
-            p.opacity = Math.max(this.config.particleOpacity.min, Math.min(this.config.particleOpacity.max, p.opacity));
+            // Reciclar partículas que saem da tela ou morrem
+            if (p.y > window.innerHeight + 20 || p.life <= 0) {
+                this.particles[index] = this.createParticle(Math.random() * window.innerWidth, -20);
+            }
         });
     }
     
     renderParticles() {
         this.particles.forEach(p => {
             this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             
-            // Cor com variação
-            const r = 146;
-            const g = Math.max(0, Math.min(255, 244 + p.colorVariation));
-            const b = Math.max(0, Math.min(255, 40 - p.colorVariation));
-            
-            this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.opacity})`;
+            const coreColor = `rgba(${this.config.particleColor}, ${p.opacity * p.life})`;
+            const glowColor = `rgba(${this.config.particleColor}, ${p.opacity * p.life * 0.3})`;
+
+            // Brilho externo
+            this.ctx.shadowColor = glowColor;
+            this.ctx.shadowBlur = p.size * 3;
+
+            // Desenhar forma orgânica
+            this.ctx.fillStyle = coreColor;
+            this.ctx.moveTo(p.x + p.shapePoints[0].x, p.y + p.shapePoints[0].y);
+            for (let i = 1; i < p.shapePoints.length; i++) {
+                this.ctx.quadraticCurveTo(
+                    p.x + p.shapePoints[i-1].x, p.y + p.shapePoints[i-1].y,
+                    p.x + p.shapePoints[i].x, p.y + p.shapePoints[i].y
+                );
+            }
+            this.ctx.closePath();
             this.ctx.fill();
-            
-            // Adicionar um pequeno brilho
-            this.ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${p.opacity * 0.5})`;
-            this.ctx.shadowBlur = p.size * 2;
-            this.ctx.fill();
-            this.ctx.shadowBlur = 0;
         });
+        // Resetar sombra para não afetar outros elementos
+        this.ctx.shadowBlur = 0;
     }
     
-    // Ajustar densidade de partículas
     setDensity(density) {
-        this.config.particleCount = Math.max(10, Math.min(200, density));
+        this.config.particleCount = Math.max(10, Math.min(300, density));
         this.initParticles();
     }
     
-    // Ajustar velocidade das partículas
     setSpeed(speed) {
-        // Speed de 0.1 a 2.0
         const normalized = Math.max(0.1, Math.min(2.0, speed));
-        this.config.particleSpeed.min = 0.2 * normalized;
-        this.config.particleSpeed.max = 0.8 * normalized;
+        this.config.particleSpeed.min = 0.3 * normalized;
+        this.config.particleSpeed.max = 1.0 * normalized;
     }
     
-    // Limpar todas as partículas
     clear() {
         this.particles = [];
         if (this.ctx) {
@@ -231,7 +211,6 @@ class LoginBackgroundEffect {
     }
 }
 
-// Inicializar sistema globalmente quando a página estiver pronta
 if (typeof window !== 'undefined') {
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
@@ -242,4 +221,4 @@ if (typeof window !== 'undefined') {
     }
 }
 
-console.log('🎨 Sistema de Partículas de Fundo carregado com sucesso!');
+console.log('🎨 Sistema de Ectoplasma de Fundo carregado com sucesso!');
