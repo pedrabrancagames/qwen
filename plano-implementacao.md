@@ -12,9 +12,9 @@ Este plano descreve a implementação das melhorias compatíveis de `Melhorias.m
 - [x] Garantir otimização de performance para dispositivos móveis
 
 #### Tarefa 1.2: Animação de Carregamento Personalizada do Proton Pack
-- [ ] Substituir a barra de progresso atual por visualização animada do proton pack
-- [ ] Implementar em `ui-manager.js` e `animations.js`
-- [ ] Adicionar estilos CSS correspondentes em `style.css`
+- [x] Substituir a barra de progresso atual por visualização animada do proton pack
+- [x] Implementar em `ui-manager.js` e `animations.js`
+- [x] Adicionar estilos CSS correspondentes em `style.css`
 
 #### Tarefa 1.3: Animações de Status do Inventário
 - [ ] Adicionar feedback visual quando o inventário estiver cheio (piscando vermelho)

@@ -640,6 +640,31 @@ body {
     }
 }
 
+/* Estilos para o badge do inventário quando cheio */
+#inventory-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 0px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    font-weight: bold;
+    border: 2px solid white;
+    transition: all 0.3s ease;
+    animation: badge-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes badge-pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
 /* Efeitos de Ecto-1 */
 .ecto1-arrival {
     animation: ecto1-drive-in-effect 1.5s ease-out;

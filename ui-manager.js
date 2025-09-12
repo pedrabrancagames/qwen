@@ -432,6 +432,27 @@ export class UIManager {
         this.inventoryBadge.innerText = `${inventory.length}/${inventoryLimit}`;
         this.ghostList.innerHTML = '';
         
+        // Verificar se o inventário está cheio
+        const isInventoryFull = inventory.length >= inventoryLimit;
+        
+        // Adicionar ou remover classe de alerta visual com base no estado do inventário
+        if (this.inventoryIconContainer) {
+            if (isInventoryFull) {
+                // Adicionar animação e efeitos visuais quando o inventário estiver cheio
+                this.inventoryIconContainer.classList.add('inventory-full-warning');
+                this.inventoryIconContainer.classList.add('inventory-glow');
+                
+                // Disparar animação usando o animationManager
+                if (window.animationManager) {
+                    window.animationManager.animateInventoryFull(this.inventoryIconContainer);
+                }
+            } else {
+                // Remover animações e efeitos visuais quando o inventário não estiver cheio
+                this.inventoryIconContainer.classList.remove('inventory-full-warning');
+                this.inventoryIconContainer.classList.remove('inventory-glow');
+            }
+        }
+        
         if (inventory.length === 0) {
             this.ghostList.innerHTML = '<li>Inventário vazio.</li>';
             if (this.depositButton) {
